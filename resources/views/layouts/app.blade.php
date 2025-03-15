@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Laravel') }} |  {{ isset($header) ? strip_tags($header) : ''}} </title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -73,7 +73,6 @@
         <x-banner />
 
         <div class="min-content min-h-screen">
-
             @if (session('success') || session('error') || session()->has('message'))
                 <div id="notification"
                     class="fixed bottom border border-gray-300 right-5 max-w-sm w-full bg-white shadow-soft-xl rounded-2xl pointer-events-auto ring-1 ring-black ring-opacity-5 transition-transform transform translate-y-[100%] opacity-0 duration-300">

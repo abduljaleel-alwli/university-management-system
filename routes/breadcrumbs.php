@@ -35,50 +35,50 @@ Breadcrumbs::for('verification.notice', function (BreadcrumbTrail $trail) {
 
 // ----> Profile
 // مسار reset-password
-Breadcrumbs::for('password.reset', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel'); // إذا كان لديك لوحة تحكم، يمكن أن تكون هذه المسار الأب
-    $trail->push(__('Reset Password'), route('password.reset'));
+Breadcrumbs::for('password.reset', function (BreadcrumbTrail $trail, $token) {
+    $trail->parent('home'); // إذا كان لديك لوحة تحكم، يمكن أن تكون هذه المسار الأب
+    $trail->push(__('Reset Password'), route('password.reset', ['token' => $token]));
 });
 
 // مسار sanctum/csrf-cookie
 Breadcrumbs::for('sanctum.csrf-cookie', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel');
+    $trail->parent('home');
     $trail->push(__('CSRF Cookie'), route('sanctum.csrf-cookie'));
 });
 
 // مسار storage/{path}
 Breadcrumbs::for('storage.local', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel');
+    $trail->parent('home');
     $trail->push(__('Storage'), route('storage.local'));
 });
 
 // مسار two-factor-challenge
 Breadcrumbs::for('two-factor.login', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel');
+    $trail->parent('home');
     $trail->push(__('Two-Factor Authentication'), route('two-factor.login'));
 });
 
 // مسار user/confirm-password
 Breadcrumbs::for('password.confirm', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel');
+    $trail->parent('home');
     $trail->push(__('Confirm Password'), route('password.confirm'));
 });
 
 // مسار user/confirmed-password-status
 Breadcrumbs::for('password.confirmation', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel');
+    $trail->parent('home');
     $trail->push(__('Password Confirmation Status'), route('password.confirmation'));
 });
 
 // مسار user/confirmed-two-factor-authentication
 Breadcrumbs::for('two-factor.confirm', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel');
+    $trail->parent('home');
     $trail->push(__('Confirmed Two-Factor Authentication'), route('two-factor.confirm'));
 });
 
 // مسار user/profile
 Breadcrumbs::for('profile.show', function (BreadcrumbTrail $trail) {
-    $trail->parent('panel');
+    $trail->parent('home');
     $trail->push(__('Profile'), route('profile.show'));
 });
 

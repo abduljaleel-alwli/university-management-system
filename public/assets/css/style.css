@@ -285,3 +285,15 @@
         overflow-y: auto;
     }
 }
+
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: 0 0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c5c5c58c;
+    border-radius: 50px;
+}
