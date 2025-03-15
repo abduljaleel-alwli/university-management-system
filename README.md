@@ -28,7 +28,7 @@ DB_USERNAME=your_username
 DB_PASSWORD=
 ```
 
-### Email setup:
+### Mailer setup:
 ```
 MAIL_MAILER=smtp
 MAIL_SCHEME=null
