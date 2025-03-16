@@ -359,5 +359,11 @@
     "Send": "ارسل",
     "Email sent successfully!": "تم إرسال البريد الإلكتروني بنجاح!",
     "An error occurred while sending mail.": "حدث خطأ أثناء إرسال البريد.",
-    "New Password (Optional)": "كلمة مرور جديدة (اختياري)"
+    "New Password (Optional)": "كلمة مرور جديدة (اختياري)",
+    "Whoops! Something went wrong.": "عذرًا! حدث خطأ ما.",
+    "Please confirm access to your account by entering the authentication code provided by your authenticator application.": "يرجى تأكيد الوصول إلى حسابك بإدخال رمز المصادقة الذي توفره تطبيق المصادقة الخاص بك.",
+    "Please confirm access to your account by entering one of your emergency recovery codes.": "يرجى تأكيد الوصول إلى حسابك بإدخال أحد رموز الاسترداد الطارئة الخاصة بك.",
+    "Recovery Code": "رمز الاسترداد",
+    "Use a recovery code": "استخدام رمز الاسترداد",
+    "Use an authentication code": "استخدام رمز المصادقة"
 }
