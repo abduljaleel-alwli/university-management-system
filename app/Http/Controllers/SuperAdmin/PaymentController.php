@@ -15,9 +15,6 @@ class PaymentController extends Controller
 
     public function show($id)
     {
-        // $student = Payment::where('id', $id)->first()->student;
-        // $student_name = $student->first_name . ' '. $student->father_name . ' ' . $student->grandfather_name . ' ' . $student->last_name;
-        // return view('panel.super-admin.payment.show', ['payment_id' => $id, 'student_name' => $student_name]);
         return view('panel.super-admin.payment.show', ['payment_id' => $id]);
     }
 }

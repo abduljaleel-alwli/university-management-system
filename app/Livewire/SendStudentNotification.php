@@ -43,7 +43,7 @@ class SendStudentNotification extends Component
     public function mount()
     {
         if (!Auth::user()->hasRole('super-admin')) {
-            abort(403, 'You are not authorized to access this page.');
+            abort(403, __("You are not authorized"));
         }
 
         $this->departments = Department::all();
@@ -98,7 +98,7 @@ class SendStudentNotification extends Component
     public function sendNotification()
     {
         if (!Auth::user()->hasRole('super-admin')) {
-            session()->flash('error', 'You are not authorized to send notifications.');
+            session()->flash('error', __('You are not authorized to send notifications.'));
             return;
         }
 
@@ -107,9 +107,9 @@ class SendStudentNotification extends Component
 
         if ($student && $admin) {
             $admin->notify(new StudyExtensionAlert($student, $this->message));
-            session()->flash('success', 'The notification was sent successfully.');
+            session()->flash('success', __('The notification was sent successfully.'));
         } else {
-            session()->flash('error', 'An error occurred while sending.');
+            session()->flash('error', __('An error occurred while sending.'));
         }
     }
 

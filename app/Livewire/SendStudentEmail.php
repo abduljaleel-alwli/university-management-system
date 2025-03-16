@@ -47,7 +47,7 @@ class SendStudentEmail extends Component
     public function mount()
     {
         if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'You are not authorized to access this page.');
+            abort(403, __("You don’t have permission."));
         }
 
     }

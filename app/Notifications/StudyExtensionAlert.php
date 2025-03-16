@@ -17,7 +17,8 @@ class StudyExtensionAlert extends Notification
     public function __construct($student, $message = null)
     {
         $this->student = $student;
-        $this->message = $message ?: "Remaining Days For Student: {$student->first_name} Is Less Than 90 Days";
+        $this->message = $message ?: __("Remaining Days For Student: :student_name Is Less Than 90 Days", ['student_name' => $student->first_name]);
+        // $this->message = $message ?: "Remaining Days For Student: {$student->first_name} Is Less Than 90 Days";
     }
 
     public function via($notifiable)

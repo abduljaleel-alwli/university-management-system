@@ -33,7 +33,7 @@ class AdminStudents extends Component
     public function mount()
     {
         if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'You don’t have permission.');
+            abort(403, __("You don’t have permission."));
         }
     }
 

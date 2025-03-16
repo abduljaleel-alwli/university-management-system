@@ -103,7 +103,7 @@ class StudentController extends Controller
 
         // إذا لم يتم العثور على الطالب، قم بإرجاع رد 404
         if (!$student) {
-            abort(404, 'The student does not exist.');
+            abort(404, __("The student does not exist."));
         }
 
         // إرجاع عرض التعديل مع بيانات الطالب
@@ -123,7 +123,7 @@ class StudentController extends Controller
 
         // إذا لم يتم العثور على الطالب، قم بإرجاع رد 404
         if (!$student) {
-            abort(404, 'The student does not exist.');
+            abort(404, __("The student does not exist."));
         }
 
         // إرجاع عرض التعديل مع بيانات الطالب

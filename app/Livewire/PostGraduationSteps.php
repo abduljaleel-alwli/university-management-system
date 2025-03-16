@@ -49,7 +49,7 @@ class PostGraduationSteps extends Component
             !($user->hasRole('super-admin') ||
                 ($user->hasRole('admin') && $this->student->department_id === $user->department_id))
         ) {
-            abort(403); // منع الوصول
+            abort(403, __("You don’t have permission."));
         }
 
         $this->step = PostGraduationStep::firstOrCreate(
@@ -77,7 +77,7 @@ class PostGraduationSteps extends Component
     public function save()
     {
         if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'غير مسموح لك بتحديث البيانات.');
+            abort(403, __("You don’t have permission."));
         }
 
         $this->validate();
@@ -93,7 +93,7 @@ class PostGraduationSteps extends Component
         ]);
 
         $this->hasChanges = false;
-        session()->flash('message', 'تم حفظ التغييرات بنجاح.');
+        session()->flash('success', __('Changes have been successfully saved'));
     }
 
     // تحديث البيانات عند التغيير
@@ -111,7 +111,7 @@ class PostGraduationSteps extends Component
         // إعادة تحميل القيم بعد الحفظ
         $this->step = PostGraduationStep::find($this->step->id);
 
-        session()->flash('message', 'تم تحديث البيانات بنجاح.');
+        session()->flash('success', __('Data has been successfully updated'));
     }
 
 

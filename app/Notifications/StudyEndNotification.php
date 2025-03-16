@@ -52,7 +52,7 @@ class StudyEndNotification extends Notification
         return [
             'type' => 'student-end-date',
             'student_id' => $this->student->id,
-            'message' => 'The student study period ends after 3 months.',
+            'message' => __("The student study period ends after 3 months."),
             'url' => '/panel/students/' . $this->student->id,
             'super-url' => '/panel/students/super/' . $this->student->id,
         ];

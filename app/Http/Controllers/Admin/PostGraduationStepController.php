@@ -28,7 +28,7 @@ class PostGraduationStepController extends Controller
         }
         // منع الوصول للمستخدمين غير المصرح لهم
         else {
-            abort(403, 'غير مصرح لك بعرض هذه البيانات.');
+            abort(403, __("You are not authorized"));
         }
 
         return view('panel.admin.post-graduation.index', compact('steps'));
@@ -49,7 +49,7 @@ class PostGraduationStepController extends Controller
             return view('panel.admin.post-graduation.show', compact('PostGraduationStep'));
         }
 
-        abort(403, 'غير مصرح لك بعرض هذه البيانات.');
+        abort(403, __("You are not authorized"));
     }
 
     // السماح بالتحديث فقط لمسؤولي الأقسام
@@ -68,7 +68,7 @@ class PostGraduationStepController extends Controller
 
         // التحقق من أن المستخدم admin
         if (!Auth::user()->hasRole('admin')) {
-            return response()->json(['error' => 'ليس لديك صلاحية لإضافة مرحلة ما بعد التخرج.'], 403);
+            return response()->json(['error' => __("You are not authorized")], 403);
         }
 
         $student = Student::findOrFail($request->student_id);
@@ -76,17 +76,17 @@ class PostGraduationStepController extends Controller
         if ($student->status !== 'suspended') {
             $student->update(['status' => 'pending_review']);
         }else{
-            return response()->json(['error' => 'لا يمكنك إضافة مرحلة ما بعد التخرج لهذا الطالب لأنة مقيد.'], 403);
+            return response()->json(['error' => __("You are not authorized")], 403);
         }
 
         // التأكد أن الطالب ينتمي إلى نفس القسم الخاص بالمسؤول
         if (Auth::user()->department_id !== $student->department_id) {
-            return response()->json(['error' => 'لا يمكنك إضافة مرحلة ما بعد التخرج لهذا الطالب.'], 403);
+            return response()->json(['error' => __("You are not authorized")], 403);
         }
 
         // التحقق مما إذا كان هناك سجل سابق لهذا الطالب
         if (PostGraduationStep::where('student_id', $request->student_id)->exists()) {
-            return response()->json(['error' => 'تمت إضافة مرحلة ما بعد التخرج لهذا الطالب مسبقًا.'], 409);
+            return response()->json(['error' => __('Post-graduation step already exists for this student.')], 409);
         }
 
         // إنشاء مرحلة ما بعد التخرج
@@ -102,7 +102,7 @@ class PostGraduationStepController extends Controller
         ]);
 
         return response()->json([
-            'success' => 'تمت إضافة مرحلة ما بعد التخرج بنجاح.',
+            'success' => __('Post-graduation step added successfully.'),
             'post_graduation_step' => $postGraduationStep
         ]);
     }
@@ -115,7 +115,7 @@ class PostGraduationStepController extends Controller
 
         // السماح فقط لـ Admin مسؤول عن القسم بالتحديث، ومنع Super Admin من التعديل
         if (!$user->hasRole('admin') || $step->student->department_id !== $user->department_id) {
-            abort(403, 'غير مصرح لك بتحديث هذه البيانات.');
+            abort(403, __("You are not authorized"));
         }
 
         $validated = $request->validate([
@@ -140,7 +140,7 @@ class PostGraduationStepController extends Controller
 
         $step->student->save();
 
-        return redirect()->route('post_graduation_steps.index')->with('success', 'تم تحديث بيانات الطالب بنجاح.');
+        return redirect()->route('post_graduation_steps.index')->with('success', __('Student data updated successfully.'));
     }
 
 
@@ -154,12 +154,12 @@ class PostGraduationStepController extends Controller
 
         // السماح فقط لـ Admin مسؤول عن نفس القسم بالحذف، ومنع Super Admin من الحذف
         if (!$user->hasRole('admin') || $student->department_id !== $user->department_id) {
-            abort(403, 'غير مصرح لك بحذف هذا السجل.');
+            abort(403, __("You are not authorized"));
         }
 
         $postGraduation->delete();
 
-        return redirect()->route('admin.post-graduation.index')->with('success', 'تم حذف السجل بنجاح.');
+        return redirect()->route('admin.post-graduation.index')->with('success', __('Record deleted successfully.'));
     }
 
 }

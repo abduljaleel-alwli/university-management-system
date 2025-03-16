@@ -24,7 +24,7 @@ class PostGraduationController extends Controller
         }
         // منع الوصول للمستخدمين غير المصرح لهم
         else {
-            abort(403, 'غير مصرح لك بعرض هذه البيانات.');
+            abort(403, __("You are not authorized"));
         }
 
         return view('panel.super-admin.post-graduation.index', compact('steps'));
@@ -45,6 +45,6 @@ class PostGraduationController extends Controller
             return view('panel.super-admin.post-graduation.show', compact('PostGraduationStep'));
         }
 
-        abort(403, 'غير مصرح لك بعرض هذه البيانات.');
+        abort(403, __("You are not authorized"));
     }
 }

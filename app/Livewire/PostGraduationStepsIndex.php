@@ -60,7 +60,7 @@ class PostGraduationStepsIndex extends Component
                 $q->where('department_id', $user->department_id);
             })->with('student');
         } else {
-            abort(403, 'You have no permission.');
+            abort(403, __("You don’t have permission."));
         }
 
         // تطبيق البحث على الطالب والبيانات الأخرى

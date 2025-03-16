@@ -29,7 +29,7 @@ class StudentPostGraduation extends Notification
     {
         return [
             'type' => 'post-graduation',
-            'message' => 'A graduation discussion has been created for the student please complete the procedure',
+            'message' => __("A graduation discussion has been created for the student please complete the procedure"),
             'student_id' => $this->student->id,
             'graduation-url' => '/panel/post-graduation/' . $this->postGraduation->id,
             'graduation-super-url' => '/panel/post-graduation/super/' . $this->postGraduation->id,

@@ -34,10 +34,10 @@ class PaymentShow extends Component
         // التحقق من صلاحية المستخدم
         if (Auth::user()->hasRole('admin')) {
             if (Auth::user()->department_id !== $payment->department_id) {
-                abort(403, 'غير مسموح لك بعرض البيانات.');
+                abort(403, __("You don’t have permission."));
             }
         } elseif (!Auth::user()->hasRole('super-admin')) {
-            abort(403, 'غير مسموح لك.');
+            abort(403, __("You don’t have permission."));
         }
 
         $this->student = $student;
@@ -56,14 +56,14 @@ class PaymentShow extends Component
 
         // التحقق من صلاحية المستخدم
         if (!Auth::user()->hasRole('admin')) {
-            session()->flash('error', 'ليس لديك صلاحية لتعديل الدفعة.');
+            session()->flash('error', __("You don’t have permission."));
             return;
         }
 
         $payment = Payment::findOrFail($this->paymentId);
 
         if (Auth::user()->department_id !== $payment->department_id) {
-            session()->flash('error', 'لا يمكنك تعديل هذه الدفعة.');
+            session()->flash('error', __('You cannot edit this payment'));
             return;
         }
 
@@ -76,7 +76,7 @@ class PaymentShow extends Component
             'editor_id' => Auth::id(),
         ]);
 
-        session()->flash('message', 'تم تعديل الدفعة بنجاح.');
+        session()->flash('success', __('The payment has been successfully updated'));
     }
 
     public function render()

@@ -19,9 +19,6 @@ class UserController extends Controller
 
     public function index(): View
     {
-        // جلب جميع المستخدمين مع أدوارهم
-        // $users = User::with('roles', 'department')->get();
-        // return view('panel.super-admin.admin.index', compact('users'));
         return view('panel.super-admin.admin.index');
     }
 
@@ -85,7 +82,7 @@ class UserController extends Controller
         $departments = Department::all(); // جلب جميع الأقسام
 
         return view('panel.super-admin.admin.edit', compact('user', 'roles', 'departments'))
-        ->with('success', 'User registered successfully.');
+        ->with('success', __('User registered successfully.'));
     }
 
     public function update(Request $request, $id)
@@ -121,7 +118,7 @@ class UserController extends Controller
         // تحديث الدور
         $user->syncRoles([$validatedData['role']]);
 
-        return redirect()->route('super-admin.admins.index')->with('success', 'User updated successfully.');
+        return redirect()->route('super-admin.admins.index')->with('success', __('User updated successfully.'));
     }
 
     public function destroy($id)
@@ -134,7 +131,7 @@ class UserController extends Controller
 
         // إعادة التوجيه إلى الصفحة الرئيسية مع رسالة نجاح
         return redirect()->route('super-admin.admins.index')
-            ->with('success', 'User deleted successfully.');
+            ->with('success', __('User deleted successfully.'));
     }
 
 }

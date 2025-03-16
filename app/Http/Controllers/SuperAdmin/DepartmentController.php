@@ -37,7 +37,7 @@ class DepartmentController extends Controller
             'name_en' => $request->name_en,
         ]);
 
-        return response()->json(['message' => 'Department created successfully!', 'department' => $department], 201);
+        return response()->json(['message' => __('Department created successfully!'), 'department' => $department], 201);
     }
 
 
@@ -82,7 +82,7 @@ class DepartmentController extends Controller
         $department = Department::findOrFail($id);
         $department->delete();
 
-        return response()->json(['message' => 'Department deleted successfully!']);
+        return response()->json(['message' => __('Department deleted successfully!')]);
     }
 
     // ---> Show Student With Status

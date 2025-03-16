@@ -17,9 +17,6 @@ class PaymentController extends Controller
 
     public function show($id)
     {
-        // $student = Payment::where('id', $id)->first()->student;
-        // $student_name = $student->first_name . ' '. $student->father_name . ' ' . $student->grandfather_name . ' ' . $student->last_name;
-        // return view('panel.admin.payment.show', ['payment_id' => $id, 'student_name' => $student_name]);
         return view('panel.admin.payment.show', ['payment_id' => $id]);
     }
 
@@ -35,12 +32,12 @@ class PaymentController extends Controller
 
         // التحقق من أن المستخدم مسؤول (Admin) وفي نفس القسم
         if (!Auth::user()->hasRole('admin')) {
-            return response()->json(['error' => 'ليس لديك صلاحية لإضافة دفعة.'], 403);
+            return response()->json(['error' => __("You are not authorized")], 403);
         }
 
         $student = Student::findOrFail($request->student_id);
         if (Auth::user()->department_id !== $student->department_id) {
-            return response()->json(['error' => 'لا يمكنك إضافة دفعة لهذا الطالب.'], 403);
+            return response()->json(['error' => __("You are not authorized")], 403);
         }
 
         $payment = Payment::create([
@@ -54,7 +51,7 @@ class PaymentController extends Controller
         ]);
 
         return response()->json([
-            'success' => 'تمت إضافة الدفعة بنجاح.',
+            'success' => __('The payment has been added successfully.'),
             'payment' => $payment
         ]);
     }
@@ -64,7 +61,7 @@ class PaymentController extends Controller
     {
         // التحقق من أن المستخدم مسؤول (Admin)
         if (!Auth::user()->hasRole('admin')) {
-            return redirect()->route('admin.payments.index')->with('error', 'ليس لديك صلاحية لحذف الدفعة.');
+            return redirect()->route('admin.payments.index')->with('error', __("You are not authorized"));
         }
 
         // العثور على الدفعة
@@ -72,14 +69,13 @@ class PaymentController extends Controller
 
         // التحقق من أن الدفعة تتعلق بنفس القسم
         if (Auth::user()->department_id !== $payment->student->department_id) {
-            return redirect()->route('admin.payments.index')->with('error', 'لا يمكنك حذف دفعة لهذا الطالب.');
+            return redirect()->route('admin.payments.index')->with('error', __('You cannot delete a payment for this student.'));
         }
 
         // حذف الدفعة
         $payment->delete();
 
-        return redirect()->route('admin.payments.index')->with('error', 'تم حذف الدفعة بنجاح.' );
+        return redirect()->route('admin.payments.index')->with('error', __('Payment deleted successfully.'));
     }
-
 
 }

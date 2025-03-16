@@ -46,7 +46,7 @@ class DepartmentForm extends Component
     {
         if ($this->departmentToDelete) {
             Department::findOrFail($this->departmentToDelete)->delete();
-            session()->flash('message', __('Department deleted successfully'));
+            session()->flash('success', __('Department deleted successfully'));
         }
 
         $this->confirmDeleteModal = false;
@@ -63,13 +63,13 @@ class DepartmentForm extends Component
                 'name_ar' => $this->name_ar,
                 'name_en' => $this->name_en,
             ]);
-            session()->flash('message', __('The department has been successfully updated'));
+            session()->flash('success', __('The department has been successfully updated'));
         } else {
             Department::create([
                 'name_ar' => $this->name_ar,
                 'name_en' => $this->name_en,
             ]);
-            session()->flash('message', __('The department was created successfully'));
+            session()->flash('success', __('The department was created successfully'));
         }
 
         $this->modalOpen = false;
