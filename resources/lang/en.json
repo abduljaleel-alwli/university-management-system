@@ -365,5 +365,6 @@
     "Please confirm access to your account by entering one of your emergency recovery codes.": "Please confirm access to your account by entering one of your emergency recovery codes.",
     "Recovery Code": "Recovery Code",
     "Use a recovery code": "Use a recovery code",
-    "Use an authentication code": "Use an authentication code"
+    "Use an authentication code": "Use an authentication code",
+    "This is a secure area of the application. Please confirm your password before continuing.": "This is a secure area of the application. Please confirm your password before continuing.",
 }

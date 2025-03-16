@@ -365,5 +365,6 @@
     "Please confirm access to your account by entering one of your emergency recovery codes.": "يرجى تأكيد الوصول إلى حسابك بإدخال أحد رموز الاسترداد الطارئة الخاصة بك.",
     "Recovery Code": "رمز الاسترداد",
     "Use a recovery code": "استخدام رمز الاسترداد",
-    "Use an authentication code": "استخدام رمز المصادقة"
+    "Use an authentication code": "استخدام رمز المصادقة",
+    "This is a secure area of the application. Please confirm your password before continuing.": "هذه منطقة آمنة من التطبيق. يرجى تأكيد كلمة المرور قبل المتابعة.",
 }
