@@ -17,12 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             Route::middleware('web')->group(function () {
-                Route::middleware(['web', 'auth:sanctum', 'role:super-admin'])
+                Route::middleware(['web', 'verified', 'auth:sanctum', 'role:super-admin'])
                     ->prefix('panel')
                     ->name('super-admin.')
                     ->group(base_path('routes/superAdmin.php'));
 
-                Route::middleware(['web', 'auth:sanctum', 'role:admin'])
+                Route::middleware(['web', 'verified', 'auth:sanctum', 'role:admin'])
                     ->prefix('panel')
                     ->name('admin.')
                     ->group(base_path(path: 'routes/admin.php'));
