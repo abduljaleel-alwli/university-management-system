@@ -3,13 +3,30 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\StudentNotificationMail;
+use Illuminate\Support\Facades\Mail;
 use App\Models\PostGraduationStep;
 use App\Models\Student;
+use App\Models\User;
+use App\Notifications\StudentPostGraduation;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PostGraduationStepController extends Controller
 {
+
+
+    private $subject;
+    private $message;
+    private $link;
+
+    public function __construct()
+    {
+        $this->subject = __("Post-Graduation Discussion Notification");
+        $this->message = __("Graduation discussion has been created for you, Please visit the university office on date");
+        $this->link = null;
+    }
 
     // --> عرض جميع الطلاب في مراحل ما بعد الدراسة.
     public function index()
@@ -101,12 +118,17 @@ class PostGraduationStepController extends Controller
             'post_graduation_status' => $request->post_graduation_status,
         ]);
 
+        // إرسال الإشعارات
+        $this->sendNotifications($student, $postGraduationStep);
+        $this->sendEmail($student->id, $postGraduationStep);
+
         return response()->json([
             'success' => __('Post-graduation step added successfully.'),
+            'message_2' => __('Send email successfully!.'),
+            'type'=> 'post_graduation',
             'post_graduation_step' => $postGraduationStep
         ]);
     }
-
 
     // --> تحديث بيانات مرحلة ما بعد الدراسة للطالب.
     public function update(Request $request, PostGraduationStep $step)
@@ -160,6 +182,47 @@ class PostGraduationStepController extends Controller
         $postGraduation->delete();
 
         return redirect()->route('admin.post-graduation.index')->with('success', __('Record deleted successfully.'));
+    }
+
+    // --> إرسال إشعار للطلاب بعد التخرج.
+    private function sendNotifications(Student $student, PostGraduationStep $PostGraduationStep)
+    {
+        // الحصول على super admins
+        $superAdmins = User::role('super-admin')->get();
+
+        // الحصول على admins المسؤولين عن قسم الطالب
+        $admins = User::role('admin')
+            ->where('department_id', $student->department_id)
+            ->get();
+
+        // دمج super admins و admins في مجموعة واحدة
+        $recipients = $superAdmins->merge($admins);
+
+        // إرسال الإشعار
+        Notification::send($recipients, new StudentPostGraduation($student, $PostGraduationStep));
+    }
+
+    // --> إرسال بريد إلكتروني للطلاب.
+    public  function sendEmail($student_id, $postGraduationStep)
+    {
+        $student = Student::find($student_id);
+        $this->message = $this->message . ': ' . $postGraduationStep->discussion_date;
+
+        if ($student) {
+            Mail::to($student->email)->send(new StudentNotificationMail($this->subject, $this->message, $this->link ?? null));
+
+            return response()->json([
+                'success' => __('Email sent successfully!'),
+                'type'=> 'email',
+                'post_graduation_step' => $postGraduationStep
+            ]);
+        } else {
+            return response()->json([
+                'error' => __('An error occurred while sending mail.'),
+                'post_graduation_step' => $postGraduationStep
+            ]);
+        }
+        
     }
 
 }

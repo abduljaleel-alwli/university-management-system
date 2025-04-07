@@ -10,8 +10,7 @@
             sidenav-close></i>
         <a class="block px-8 py-6 m-0 text-sm whitespace-nowrap text-slate-700" href="{{ route('panel') }}">
             @include('components.application-logo')
-            <span
-                class="ml-1 font-semibold transition-all duration-200 ease-nav-brand">{{ __('University System') }}</span>
+            <span class="ml-1 font-semibold transition-all duration-200 ease-nav-brand">{{ $settings->site_name }}</span>
         </a>
     </div>
 
@@ -248,6 +247,28 @@
 
             <!-- Super Admin Nave Links -->
             @role('super-admin')
+                <!-- Specializations -->
+                <li class="sidebar-item mt-0.5 w-full">
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4  transition-colors"
+                        href="{{ route('super-admin.specializations.index') }}">
+                        <div
+                            class="sidebar-item-icon-box {{ isActiveIcon('super-admin.specializations.index', 'icon-active-2') }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                            <svg width="64px" height="64px" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                                        fill="#1C274C"></path>
+                                </g>
+                            </svg>
+                        </div>
+                        <span
+                            class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Specializations') }}</span>
+                    </a>
+                </li>
+
                 <!-- Departments -->
                 <li class="sidebar-item mt-0.5 w-full">
                     <a class=" py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
@@ -701,7 +722,7 @@
             @endrole
 
 
-            <!-- Reports -->
+            <!-- Profile -->
             <li class="sidebar-item mt-0.5 w-full">
                 <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
                     href="{{ route('profile.show') }}">
@@ -727,6 +748,35 @@
                         class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Profile') }}</span>
                 </a>
             </li>
+
+            @role('super-admin')
+                <!-- Setting -->
+                <li class="sidebar-item mt-0.5 w-full">
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors"
+                        href="{{ route('super-admin.settings.index') }}">
+                        <div
+                            class="sidebar-item-icon-box {{ isActiveIcon('super-admin.settings.index', 'icon-active') }} shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white bg-center stroke-0 text-center xl:p-2.5">
+                            <svg width="64px" height="64px" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M3 9.10986V14.8799C3 16.9999 3 16.9999 5 18.3499L10.5 21.5299C11.33 22.0099 12.68 22.0099 13.5 21.5299L19 18.3499C21 16.9999 21 16.9999 21 14.8899V9.10986C21 6.99986 21 6.99986 19 5.64986L13.5 2.46986C12.68 1.98986 11.33 1.98986 10.5 2.46986L5 5.64986C3 6.99986 3 6.99986 3 9.10986Z"
+                                        stroke="#292D32" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round"></path>
+                                    <path opacity="0.34"
+                                        d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                                        stroke="#292D32" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round"></path>
+                                </g>
+                            </svg>
+                        </div>
+                        <span
+                            class="ml-1 duration-300 opacity-100 pointer-events-none ease-soft">{{ __('Settings') }}</span>
+                    </a>
+                </li>
+            @endrole
         </ul>
     </div>
 

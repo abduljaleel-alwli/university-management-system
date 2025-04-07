@@ -23,14 +23,6 @@
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('Email') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('Phone Number') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     {{ __('Start Date') }}
                                 </th>
                                 <th scope="col"
@@ -39,15 +31,15 @@
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('Department') }}
+                                    {{ __('Specialization') }}
+                                </th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    {{ __('Admission Channel') }}
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     {{ __('Status') }}
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ __('Specialization Type') }}
                                 </th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -69,15 +61,35 @@
                                         $remainingMonths !== null && $remainingMonths <= 3 && $remainingMonths >= 0;
 
                                     $isSuspended = $student->status == 'suspended';
-                                    $isPendingReview = $student->status == 'pending_review';
+                                    $isPendingReview =
+                                        $student->status == 'pending_review' &&
+                                        !isset($student->postGraduationStep->id);
+
+                                    $isPendingReviewAndisPostGraduation =
+                                        $student->status == 'pending_review' && isset($student->postGraduationStep->id);
+
+                                    $hasPostGraduationAndNotPendingReview =
+                                        $isPendingReviewAndisPostGraduation &&
+                                        $student->postGraduationStep->post_graduation_status == 'pending_review';
+
+                                    $status = null;
+                                    if ($student->postGraduationStep) {
+                                        $status = $student->postGraduationStep->post_graduation_status;
+                                    }
 
                                     $rowClass = '';
-                                    if ($isCloseToEnd) {
-                                        $rowClass = 'bg-red-50';
+                                    if ($status == 'graduate') {
+                                        $rowClass = 'bg-green-100';
+                                    } elseif ($status == 'fail') {
+                                        $rowClass = 'bg-red-100';
+                                    } elseif ($isCloseToEnd) {
+                                        $rowClass = 'bg-orange-500 is-close-to-end';
                                     } elseif ($isSuspended) {
-                                        $rowClass = 'bg-yellow-50';
+                                        $rowClass = 'bg-yellow-100';
                                     } elseif ($isPendingReview) {
-                                        $rowClass = 'bg-gradient-pending from-gray-100 to-gray-200';
+                                        $rowClass = 'bg-gradient-pending from-gray-100 to-gray-100';
+                                    } elseif ($isPendingReviewAndisPostGraduation) {
+                                        $rowClass = 'bg-gradient-pending-2 from-gray-100 to-gray-100';
                                     }
                                 @endphp
                                 <tr class="{{ $rowClass }}">
@@ -87,17 +99,25 @@
                                         {{ e($student->first_name) }} {{ e($student->father_name) }}
                                         {{ e($student->last_name) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ e($student->email) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $student->phone_number }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $student->start_date }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $student->study_end_date }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $student->department->name }}</td>
+                                        {{ $student->specializationType->name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $student->admission_channel_translated }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm status">
-                                        @if ($student->status == 'active')
+                                        @if ($status == 'graduate')
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 text-green-800">
+                                                {{ __('Graduate') }}
+                                            </span>
+                                        @elseif($status == 'fail')
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 text-red-800">
+                                                {{ __('Fail') }}
+                                            </span>
+                                        @elseif ($student->status == 'active')
                                             <span
                                                 class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                 {{ __('Active') }}
@@ -114,12 +134,26 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $student->specialization_type_translated }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div class="flex space-x-2">
                                             <a href="{{ route('super-admin.students.show', $student->id) }}"
-                                                class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg">{{ __('View') }}</a>
+                                                class="bg-blue-600 text-white px-2 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg"
+                                                title="{{ __('View student details') }}">
+                                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                        stroke-linejoin="round"></g>
+                                                    <g id="SVGRepo_iconCarrier">
+                                                        <path opacity="0.5"
+                                                            d="M3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C4.97196 6.49956 7.81811 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957Z"
+                                                            stroke="#ffffff" stroke-width="1.5"></path>
+                                                        <path
+                                                            d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"
+                                                            stroke="#ffffff" stroke-width="1.5"></path>
+                                                    </g>
+                                                </svg>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

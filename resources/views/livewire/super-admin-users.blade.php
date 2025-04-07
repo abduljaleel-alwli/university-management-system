@@ -4,10 +4,23 @@
         <div class="flex flex-wrap items-center gap-4">
 
             <!-- زر البحث -->
-            <div>
-                <button wire:click="$refresh"
-                    class="flex-1 sm:flex-none bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition duration-200 ease-in-out shadow-md hover:shadow-lg whitespace-nowrap btn-bg">
-                    {{ __('Search') }}
+            <div class="flex justify-center">
+                <!-- زر البحث مع لودينق -->
+                <button wire:click="getUsersProperty" wire:loading.attr="disabled"
+                    class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl shadow-md font-semibold
+                                    hover:bg-blue-800 transition duration-200 ease-in-out hover:shadow-lg
+                                    whitespace-nowrap btn-bg">
+                    <span>{{ __('Search') }}</span>
+                    <span wire:loading wire:target="getUsersProperty">
+                        <svg class="animate-spin h-5 w-5 text-white transition-transform duration-500"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                    </span>
                 </button>
             </div>
 
@@ -20,7 +33,6 @@
             <input type="email" wire:model="search.email"
                 class="flex-1 min-w-[200px] border border-gray-300 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 placeholder-gray-500"
                 placeholder="{{ __('Email') }}">
-
         </div>
     </div>
 
@@ -41,46 +53,49 @@
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">#
+                            <th
+                                class="py-3 px-4 text-left text-sm font-medium text-gray-700 text-center uppercase tracking-wider">
+                                #
                             </th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                            <th
+                                class="py-3 px-4 text-left text-sm font-medium text-gray-700 text-center uppercase tracking-wider">
                                 {{ __('Name') }}</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                            <th
+                                class="py-3 px-4 text-left text-sm font-medium text-gray-700 text-center uppercase tracking-wider">
                                 {{ __('Email') }}</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                            <th
+                                class="py-3 px-4 text-left text-sm font-medium text-gray-700 text-center uppercase tracking-wider">
                                 {{ __('Role') }}</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                            <th
+                                class="py-3 px-4 text-left text-sm font-medium text-gray-700 text-center uppercase tracking-wider">
                                 {{ __('Department') }}</th>
-                            <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                            <th
+                                class="py-3 px-4 text-left text-sm font-medium text-gray-700 text-center uppercase tracking-wider">
                                 {{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach ($users as $user)
                             <tr class="hover:bg-gray-50 transition duration-200">
-                                <td class="py-4 px-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
-                                <td class="py-4 px-4 text-sm text-gray-700">
-                                    <div class="flex items-center">
-                                        {{ $user->name }}
-                                        @if (auth()->user()->id == $user->id)
-                                            <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                                {{ __('You') }}
-                                            </span>
-                                        @endif
-                                    </div>
+                                <td class="py-4 px-4 text-sm text-gray-700 text-center">{{ $loop->iteration }}</td>
+                                <td class="py-4 px-4 text-sm text-gray-700 text-center">
+                                    {{ $user->name }}
+                                    @if (auth()->user()->id == $user->id)
+                                        <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                            {{ __('You') }}
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="py-4 px-4 text-sm text-gray-700">{{ $user->email }}</td>
-                                <td class="py-4 px-4 text-sm text-gray-700">
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach ($user->roles as $role)
-                                            <span
-                                                class="px-2 py-1 text-xs rounded-full {{ $role->name == 'super-admin' ? 'bg-blue-200 text-blue-800' : 'bg-blue-100 text-blue-800' }}">
-                                                {{ $role->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
+                                <td class="py-4 px-4 text-sm text-gray-700 text-center">{{ $user->email }}</td>
+                                <td class="py-4 px-4 text-sm text-gray-700 text-center">
+                                    @foreach ($user->roles as $role)
+                                        <span
+                                            class="px-2 py-1 text-xs rounded-full {{ $role->name == 'super-admin' ? 'bg-blue-200 text-blue-800' : 'bg-blue-100 text-blue-800' }}">
+                                            {{ $role->name }}
+                                        </span>
+                                    @endforeach
                                 </td>
-                                <td class="py-4 px-4 text-sm text-gray-700">
+                                <td class="py-4 px-4 text-sm text-gray-700 text-center">
                                     @if ($user->department)
                                         <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
                                             {{ $user->department->name }}
@@ -91,18 +106,15 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="py-4 px-4 text-sm text-gray-700">
-                                    <div class="flex items-center gap-2">
-                                        <a href="{{ route('super-admin.admins.edit', ['id' => $user->id]) }}"
-                                            class="text-blue-500 hover:text-blue-700 transition duration-200">
-                                            {{ __('Edit') }}
-                                        </a>
-                                        <span class="text-gray-300">|</span>
-                                        <button onclick="openDeleteModal({{ $user->id }})"
-                                            class="text-red-500 hover:text-red-700 transition duration-200">
-                                            {{ __('Delete') }}
-                                        </button>
-                                    </div>
+                                <td class="py-4 px-4 text-sm text-gray-700 text-center">
+                                    <a href="{{ route('super-admin.admins.edit', ['id' => $user->id]) }}"
+                                        class="bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-yellow-600 transition mx-2">
+                                        {{ __('Edit') }}
+                                    </a>
+                                    <button onclick="openDeleteModal({{ $user->id }})"
+                                        class="bg-red-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700 transition">
+                                        {{ __('Delete') }}
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach

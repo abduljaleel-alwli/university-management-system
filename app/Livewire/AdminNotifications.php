@@ -47,7 +47,7 @@ class AdminNotifications extends Component
             $query->whereNotNull('read_at');
         }
 
-        return $query->latest()->paginate(3); // تحديد عدد الإشعارات لكل صفحة
+        return $query->latest()->paginate(10); // تحديد عدد الإشعارات لكل صفحة
     }
 
 

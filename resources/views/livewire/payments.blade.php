@@ -5,9 +5,21 @@
         <!-- العنوان والزر في سطر واحد -->
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold text-gray-800">{{ __('Payments Management') }}</h2>
-            <button wire:click="searchPayments"
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md hover:shadow-lg btn-bg">
-                {{ __('Search') }}
+            <button wire:click="searchPayments" wire:loading.attr="disabled"
+                class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 shadow-md rounded-xl font-semibold
+                            hover:bg-blue-800 transition duration-200 ease-in-out hover:shadow-lg
+                            whitespace-nowrap btn-bg">
+                <span>{{ __('Search') }}</span>
+                <span wire:loading wire:target="searchPayments">
+                    <svg class="animate-spin h-5 w-5 text-white transition-transform duration-500"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </span>
             </button>
         </div>
 
@@ -72,29 +84,53 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($payments as $payment)
                         <tr class="hover:bg-gray-100 transition">
-                            <td class="p-4 text-sm text-gray-900">{{ $payment->receipt_number }}</td>
-                            <td class="p-4 whitespace-nowrap text-sm text-gray-900">{{ $payment->student->full_name }}</td>
+                            <td class="p-4 text-sm text-gray-900 whitespace-nowrap">{{ $payment->receipt_number }}</td>
+                            <td class="p-4 whitespace-nowrap text-sm text-gray-900">
+                                @if ($payment->student)
+                                    {{ $payment->student->full_name }}
+                                @else
+                                    <span
+                                        class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                                        {{ __('Deleted student') }}
+                                    </span>
+                                @endif
+                            </td>
                             <td class="p-4 text-sm text-gray-900">{{ $payment->amount }}</td>
-                            <td class="p-4 text-sm text-gray-900">{{ $payment->currency == "IQD" ? __("IQD") : __("USD") }}</td>
+                            <td class="p-4 text-sm text-gray-900">
+                                {{ $payment->currency == 'IQD' ? __('IQD') : __('USD') }}</td>
                             <td class="p-4 text-sm text-gray-900">{{ $payment->payment_date }}</td>
                             <td class="p-4 text-sm text-gray-900">{{ $payment->department->name }}</td>
                             @if (Auth::user()->hasRole('super-admin'))
-                                <td class="p-4 text-sm text-gray-900">{{ $payment->author->name }}</td>
+                                <td class="p-4 text-sm text-gray-900">
+                                    @if ($payment->author)
+                                        {{ $payment->author->name }}
+                                    @else
+                                        <span
+                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                                            {{ __('Deleted user') }}
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="p-4 text-sm text-gray-900">
                                     {{ $payment->editor ? $payment->editor->name : __('Not modified') }}
                                 </td>
                             @endif
-                            <td class="p-4 flex space-x-2">
-                                @role('admin')
-                                    <a href="{{ route('admin.payments.show', $payment->id) }}"
-                                        class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg">{{ __('View/Edit') }}</a>
-                                    <button
-                                        class="bg-red-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700 transition"
-                                        onclick="openDeleteModal({{ $payment->id }})">{{ __('Delete') }}</button>
-                                @elseif('super-admin')
-                                    <a href="{{ route('super-admin.payments.show', $payment->id) }}"
-                                        class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg">{{ __('View') }}</a>
-                                @endrole
+                            <td class="p-4">
+                                <div class="flex space-x-4 whitespace-nowrap">
+                                    @role('admin')
+                                        <a href="{{ route('admin.payments.show', $payment->id) }}"
+                                            class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg mx-2"
+                                            title="{{ __('View or Edit this payment') }}">{{ __('View/Edit') }}</a>
+                                        <button
+                                            class="bg-red-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700 transition"
+                                            onclick="openDeleteModal({{ $payment->id }})"
+                                            title="{{ __('Delete this payment') }}">{{ __('Delete') }}</button>
+                                    @elseif('super-admin')
+                                        <a href="{{ route('super-admin.payments.show', $payment->id) }}"
+                                            class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg"
+                                            title="{{ __('View this payment') }}">{{ __('View') }}</a>
+                                    @endrole
+                                </div>
                             </td>
                         </tr>
                     @endforeach

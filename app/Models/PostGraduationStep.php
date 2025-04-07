@@ -20,4 +20,14 @@ class PostGraduationStep extends Model
     public function student(){
         return $this->belongsTo(Student::class);
     }
+
+    public function getStatusTranslatedAttribute()
+    {
+        return match ($this->post_graduation_status) {
+            'graduate' => __('Graduate'),              // مستمر
+            'fail' => __('Fail'),        // مؤجل
+            'pending_review' => __('Pending Review'), // قيد المراجعة
+            default => __('Not Available'),
+        };
+    }
 }

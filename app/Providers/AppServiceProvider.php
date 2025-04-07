@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
             // تشغيل الأمر يوميًا في وقت محدد (مثل منتصف الليل)
-            $schedule->command(CheckStudentsStatus::class)->dailyAt('00:00');
+            // $schedule->command(CheckStudentsStatus::class)->dailyAt('00:00');
             $schedule->command('students:send-study-end-notifications')->dailyAt('01:00');
         });
     }

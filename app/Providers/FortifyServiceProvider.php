@@ -36,7 +36,6 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::verifyEmailView(fn () => view('panel.auth.verify-email'));
         Fortify::twoFactorChallengeView(fn () => view('panel.auth.two-factor-challenge'));
 
-
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);

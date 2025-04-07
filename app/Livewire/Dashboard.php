@@ -10,6 +10,7 @@ use App\Models\PostGraduationStep;
 use App\Models\Researches;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
@@ -52,8 +53,19 @@ class Dashboard extends Component
                 ->groupBy('status')->get()->pluck('count', 'status');
             $this->totalPaymentsIQD = Payment::where('currency', 'IQD')->sum('amount');
             $this->totalPaymentsUSD = Payment::where('currency', 'USD')->sum('amount');
-            $this->studentsByStatus = Student::selectRaw("status, COUNT(*) as count")
-                ->groupBy('status')->get()->pluck('count', 'status');
+
+            $this->studentsByStatus = DB::table('students')
+                ->leftJoin('post_graduation_steps', 'students.id', '=', 'post_graduation_steps.student_id')
+                ->selectRaw("
+                        CASE
+                            WHEN post_graduation_steps.id IS NOT NULL THEN post_graduation_steps.post_graduation_status
+                            ELSE students.status
+                        END AS final_status,
+                        COUNT(*) as count
+                    ")
+                ->groupBy('final_status')
+                ->pluck('count', 'final_status');
+
             $this->latestStudents = Student::latest()->take(5)->get();
             $this->latestResearches = Researches::latest()->take(5)->get();
             $this->latestPayments = Payment::latest()->take(5)->get();
@@ -78,9 +90,20 @@ class Dashboard extends Component
                 ->whereHas('student', function ($query) use ($departmentId) {
                     $query->where('department_id', $departmentId);
                 })->sum('amount');
-            $this->studentsByStatus = Student::where('department_id', $departmentId)
-                ->selectRaw("status, COUNT(*) as count")
-                ->groupBy('status')->get()->pluck('count', 'status');
+
+            $this->studentsByStatus = DB::table('students')
+                ->leftJoin('post_graduation_steps', 'students.id', '=', 'post_graduation_steps.student_id')
+                ->where('students.department_id', $departmentId)
+                ->selectRaw("
+                        CASE
+                            WHEN post_graduation_steps.id IS NOT NULL THEN post_graduation_steps.post_graduation_status
+                            ELSE students.status
+                        END AS final_status,
+                        COUNT(*) as count
+                    ")
+                ->groupBy('final_status')
+                ->pluck('count', 'final_status');
+
             $this->latestStudents = Student::where('department_id', $departmentId)->latest()->take(5)->get();
             $this->latestResearches = Researches::whereHas('student', function ($query) use ($departmentId) {
                 $query->where('department_id', $departmentId);

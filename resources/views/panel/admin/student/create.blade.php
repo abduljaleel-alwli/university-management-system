@@ -130,11 +130,15 @@
                     </x-select>
                 </div>
                 <div>
-                    <x-label for="specialization_type" value="{{ __('Specialization Type') }}" />
-                    <x-select id="specialization_type" name="specialization_type" class="block mt-1 w-full" required>
-                        <option value="graduation_project">{{ __('Graduation Project') }}</option>
-                        <option value="pure_sciences">{{ __('Pure Sciences') }}</option>
-                        <option value="teaching_methods">{{ __('Teaching Methods') }}</option>
+                    <x-label for="specialization_type_id" :value="__('Specialization Type')" />
+                    <x-select id="specialization_type_id" name="specialization_type_id" class="block mt-1 w-full" required>
+                        <option value="">{{ __('Select Specialization Type') }}</option>
+                        @foreach ($specializationTypes as $type)
+                            <option value="{{ $type->id }}"
+                                @selected(old('specialization_type_id', $student->specialization_type_id ?? null) == $type->id)>
+                                {{ $type->name }}
+                            </option>
+                        @endforeach
                     </x-select>
                 </div>
             </div>

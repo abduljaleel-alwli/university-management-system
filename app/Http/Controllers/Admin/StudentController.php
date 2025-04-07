@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SpecializationType;
 use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,7 +23,8 @@ class StudentController extends Controller
     // عرض صفحة إضافة طالب جديد
     public function create()
     {
-        return view('panel.admin.student.create');
+        $specializationTypes = SpecializationType::all();
+        return view('panel.admin.student.create', compact('specializationTypes'));
     }
 
 
@@ -47,7 +49,7 @@ class StudentController extends Controller
             'admission_channel' => 'required|in:private,public',
             'academic_stage' => 'required|in:preparatory,research',
             'status' => 'required|in:active,suspended,pending_review',
-            'specialization_type' => 'required|in:graduation_project,pure_sciences,teaching_methods',
+            'specialization_type_id' => 'required|exists:specialization_types,id',
             'notes' => 'nullable|string',
         ]);
 
@@ -127,7 +129,14 @@ class StudentController extends Controller
         }
 
         // إرجاع عرض التعديل مع بيانات الطالب
-        return view('panel.admin.student.edit', compact('student'));
+        $specializationTypes = SpecializationType::all();
+        $hasPostGraduation = $student->postGraduationStep()->exists();
+
+        return view('panel.admin.student.edit', [
+            'student' => $student,
+            'specializationTypes' => $specializationTypes,
+            'hasPostGraduation' => $hasPostGraduation,
+        ]);
     }
 
 
@@ -135,7 +144,7 @@ class StudentController extends Controller
     // تحديث بيانات الطالب
     public function update(Request $request, Student $student)
     {
-        // dd($request->first_extension_date);
+        // (A) التحقق من صحة المدخلات:
         $validatedData = $request->validate([
             'first_name_ar' => 'required|string|max:255',
             'first_name_en' => 'required|string|max:255',
@@ -147,51 +156,146 @@ class StudentController extends Controller
             'last_name_en' => 'required|string|max:255',
             'email' => 'required|email|unique:students,email,' . $student->id,
             'phone_number' => 'required|string|max:15',
+            'start_date' => 'required|date',
             'study_type' => 'required|in:msc,phd',
             'admission_channel' => 'required|in:private,public',
             'academic_stage' => 'required|in:preparatory,research',
-            'status' => 'required|in:active,suspended,pending_review',
-            'specialization_type' => 'required|in:graduation_project,pure_sciences,teaching_methods',
+            'status' => 'required|in:active,suspended,pending_review,graduate,fail,pending_review_pg',
+            'specialization_type_id' => 'required|exists:specialization_types,id',
             'first_extension_date' => 'nullable|string',
             'second_extension_date' => 'nullable|string',
         ]);
 
-        // التحقق من إضافة التمديد الأول
-        if ($request->has('first_extension_date') && $request->first_extension_date) {
-            $validatedData['first_extension_date'] = $student->study_end_date;
-            $validatedData['study_end_date'] = Carbon::parse($student->study_end_date)->addMonths(6);
+        // (B) القيم الأصلية (من قاعدة البيانات)
+        $oldStart = Carbon::parse($student->start_date);
+        $oldEnd = $student->study_end_date ? Carbon::parse($student->study_end_date) : null;
+        $oldRem = $student->remaining_study_days; // قد يكون null
+        $oldStatus = $student->status;
+
+        // (C) قراءة القيم الجديدة
+        $newStart = Carbon::parse($validatedData['start_date']);  // تم التحقق من أنها date
+        $newStatus = $validatedData['status']; // الحالة الجديدة
+
+        // حدد حالات post_graduation
+        $postGraduationStatuses = ['graduate', 'fail', 'pending_review_pg'];
+        $isPostGraduationStatus = in_array($newStatus, $postGraduationStatuses);
+
+        // (D) إنشاء متغيرات نهائية "وسيطة"
+        $finalStart = $oldStart;
+        $finalStudyEnd = $oldEnd;
+        $finalRemaining = $oldRem;
+
+        // (E) حساب المدة الأصلية بين تاريخ البداية والنهاية (إن وجِدَت):
+        if ($oldEnd) {
+            $originalDuration = $oldStart->diffInDays($oldEnd);
+        } else {
+            $originalDuration = $oldRem ?? 0;
         }
 
-        // التحقق من إضافة التمديد الثاني
+        // (F) إذا قام المستخدم بتغيير start_date
+        if ($newStart->toDateString() !== $oldStart->toDateString()) {
+            $finalStart = $newStart;
+
+            // لو الطالب كان "غير موقوف" سابقًا
+            if ($oldStatus !== 'suspended') {
+                // ابقِ المنطق كما هو: finalStudyEnd = newStart + originalDuration
+                $finalStudyEnd = $newStart->copy()->endOfDay()->addDays($originalDuration);
+
+            } else {
+                // الطالب كان موقوف
+                return redirect()->back()->withErrors(__('It is not possible to modify the student start date if it is suspended'));
+            }
+        }
+
+        // قبل كتلة (G) أو في مكان أعلى مناسب
+        if ($oldStatus === 'suspended') {
+            if ($request->has('first_extension_date') && $request->first_extension_date) {
+                return redirect()->back()->withErrors([
+                    'first_extension_date' => __("Cannot add extension to a suspended student.")
+                ]);
+            }
+            if ($request->has('second_extension_date') && $request->second_extension_date) {
+                return redirect()->back()->withErrors([
+                    'second_extension_date' => __("Cannot add extension to a suspended student.")
+                ]);
+            }
+        }
+
+        // (G) التمديد الأول
+        if ($request->has('first_extension_date') && $request->first_extension_date) {
+            if ($finalStudyEnd) {
+                // سجل تاريخ القديم في first_extension_date
+                $validatedData['first_extension_date'] = $finalStudyEnd->toDateString();
+                // ضف 6 شهور
+                $finalStudyEnd = $finalStudyEnd->copy()->addMonths(6);
+            }
+            // لو كان الطالب موقوف، من المنطقي ألا نمدد تاريخ النهاية
+        }
+
+        // (H) التمديد الثاني
         if ($request->has('second_extension_date') && $request->second_extension_date) {
             if (!$student->first_extension_date) {
-                return redirect()->back()->withErrors(['second_extension_date' => __("The second extension cannot be added before the first extension is added.")]);
+                return redirect()->back()->withErrors([
+                    'second_extension_date' => __("The second extension cannot be added before the first extension is added.")
+                ]);
             }
-            $validatedData['second_extension_date'] = $student->study_end_date;
-            $validatedData['study_end_date'] = Carbon::parse($student->study_end_date)->addMonths(6);
+            if ($finalStudyEnd) {
+                $validatedData['second_extension_date'] = $finalStudyEnd->toDateString();
+                $finalStudyEnd = $finalStudyEnd->copy()->addMonths(6);
+            }
         }
 
-        if ($request->status == 'suspended' && $student->status != 'suspended') {
-            // حساب المدة المتبقية عند تعليق الطالب
-            $remainingDays = now()->diffInDays($student->study_end_date, false);
-            $student->remaining_study_days = max($remainingDays, 0);
-            $validatedData['study_end_date'] = null; // إيقاف العد
-        } elseif ($request->status == 'active' && $student->status == 'suspended') {
-            // استئناف العد عند تفعيل الطالب
-            if ($student->remaining_study_days) {
-                $validatedData['study_end_date'] = now()->addDays($student->remaining_study_days);
+        // (I) منطق تعليق الطالب أو تفعيله
+        if ($newStatus === 'suspended' && $oldStatus !== 'suspended') {
+            // نحسب الأيام المتبقية من finalStudyEnd (لو لم تكن null)
+            if ($finalStudyEnd) {
+                $remainingDays = now()->endOfDay()->diffInDays($finalStudyEnd->endOfDay(), false);
+                $finalRemaining = $remainingDays > 0 ? $remainingDays : 0;
+            }
+            // نجعل finalStudyEnd = null
+            $finalStudyEnd = null;
+        } elseif ($newStatus === 'active' && $oldStatus === 'suspended') {
+            // استئناف العد إذا كان لديه أيام متبقية
+            if (!is_null($finalRemaining) && $finalRemaining > 0) {
+                $finalStudyEnd = now()->endOfDay()->addDays($finalRemaining);
+                $finalRemaining = null; // تم استهلاك الأيام
+            } else {
+                return redirect()->back()->withErrors(['status' => __("Cannot activate student, no remaining days.")]);
             }
         }
+
+        // (J) تعبئة $validatedData بالقيم النهائية:
+        $validatedData['start_date'] = $finalStart->toDateString();
+        $validatedData['study_end_date'] = $finalStudyEnd ? $finalStudyEnd->toDateString() : null;
+        $validatedData['remaining_study_days'] = $finalRemaining;
+
+        // في حال كانت الحالة تخص التخرج
+        if ($isPostGraduationStatus) {
+            // تأكد من وجود سجل post_graduation_steps
+            $pgStep = $student->postGraduationStep;
+
+            if ($pgStep) {
+                $pgStep->update([
+                    'post_graduation_status' => $newStatus === 'pending_review_pg' ? 'pending_review' : $newStatus,
+                ]);
+            } else {
+                return redirect()->back()->with('error', __('No post graduation steps record.'));
+            }
+
+            // نحذف الحقل من البيانات حتى لا يحدث تضارب عند تحديث الطالب
+            unset($validatedData['status']);
+        } else {
+            // الحالة عادية، نخزنها في جدول students
+            $validatedData['status'] = $newStatus;
+        }
+
 
         $validatedData['editor_id'] = Auth::id();
 
-        // تحديث بيانات الطالب
+        // (K) التحديث الفعلي
         $student->update($validatedData);
 
-        // التحقق من حالة الطالب بعد التحديث
-        // $this->checkStudyStatus($student);
-
-        return redirect()->route('admin.students.index')->with('success', __('Student updated successfully!'));
+        return redirect()->back()->with('success', __('Student updated successfully!'));
     }
 
     public function checkStudyStatus(Student $student)

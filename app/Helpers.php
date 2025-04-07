@@ -1,6 +1,9 @@
 <?php
 
 // app/Helpers.php
+
+use App\Models\Setting;
+
 if (!function_exists('isActive')) {
     function isActive($routeName, $class = 'bg-white shadow-soft-xl rounded-lg')
     {
@@ -33,5 +36,18 @@ if (!function_exists('isRtl')) {
         }
 
         return false;
+    }
+}
+
+if (!function_exists('app_settings')) {
+    function app_settings()
+    {
+        $settings = Setting::first();
+
+        if (!$settings) {
+            $settings = Setting::create([]);
+        }
+
+        return $settings;
     }
 }

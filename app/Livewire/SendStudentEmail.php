@@ -71,8 +71,25 @@ class SendStudentEmail extends Component
                     });
                 } elseif (in_array($key, ['email', 'phone_number'])) {
                     $query->where($key, 'like', "%{$value}%");
-                } elseif (in_array($key, ['study_type', 'admission_channel', 'academic_stage', 'status'])) {
+                } elseif (in_array($key, ['study_type', 'admission_channel', 'academic_stage'])) {
                     $query->where($key, $value);
+                } elseif ($key === 'status') {
+                    if (in_array($value, ['active', 'suspended', 'pending_review'])) {
+                        $query->where('status', $value)
+                        ->whereDoesntHave('postGraduationStep'); // ✅ تأكد من عدم وجود بيانات في post_graduation_steps;
+                    }elseif ($value === 'pending_review') {
+                        $query->where(function ($q) {
+                            $q->where('status', 'pending_review')
+                              ->whereDoesntHave('postGraduationStep') // ✅ الطلاب الذين لم يدخلوا مرحلة ما بعد التخرج
+                              ->orWhereHas('postGraduationStep', function ($subQuery) {
+                                  $subQuery->where('post_graduation_status', 'pending_review'); // ✅ الطلاب الذين لديهم post_graduation_status = pending_review
+                              });
+                        });
+                    } elseif (in_array($value, ['graduate', 'fail',])) {
+                        $query->whereHas('postGraduationStep', function ($q) use ($value) {
+                            $q->where('post_graduation_status', $value);
+                        });
+                    }
                 } elseif ($key === 'start_date') {
                     $query->whereDate('start_date', '>=', $value);
                 } elseif ($key === 'study_end_date') {

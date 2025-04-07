@@ -27,6 +27,9 @@ class ShowResearch extends Component
 
         // السماح فقط للمستخدم الذي لديه دور admin برؤية الأبحاث التابعة لقسمه
         if ($user->hasRole('admin') && $research->department_id === $user->department_id) {
+            if (empty($research->student)) {
+                return redirect()->route('admin.payments.index')->with('error', __('You don’t have permission.'));
+            }
             $this->research = $research;
             return;
         }

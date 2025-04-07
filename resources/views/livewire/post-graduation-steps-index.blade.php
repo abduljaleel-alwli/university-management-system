@@ -1,7 +1,23 @@
 <div class="p-6">
 
     <div class="bg-white shadow-soft-xl rounded-2xl p-6 max-w-5xl mx-auto">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ __('Post Graduation Steps') }}</h2>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ __('Post Graduation Steps') }}</h2>
+            <button wire:click="searchData" wire:loading.attr="disabled"
+                class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 ease-in-out flex items-center gap-2 btn-bg">
+                <span>{{ __('Search') }}</span>
+                <span wire:loading wire:target="searchData">
+                    <svg class="animate-spin h-5 w-5 text-white transition-transform duration-500"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </span>
+            </button>
+        </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <input type="text" wire:model.defer="search.name" placeholder="{{ __('Student Name') }}..."
@@ -49,63 +65,92 @@
                     <option value="{{ $key }}">{{ $label }}</option>
                 @endforeach
             </select>
-
-            <button wire:click="searchData"
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 ease-in-out shadow-md hover:shadow-soft-xl btn-bg">
-                {{ __('Search') }}
-            </button>
         </div>
     </div>
 
     <div class="overflow-x-auto bg-white shadow-soft-xl rounded-2xl p-6 my-12">
-        <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
-            <thead class="bg-gray-100 text-gray-700">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-50">
                 <tr>
-                    <th class="p-3 text-left">{{ __('Student') }}</th>
-                    <th class="p-3 text-left">{{ __('Discussion Date') }}</th>
-                    <th class="p-3 text-left">{{ __('Committee Decision') }}</th>
-                    <th class="p-3 text-left">{{ __('Department') }}</th>
-                    <th class="p-3 text-left">{{ __('Student Status') }}</th>
-                    <th class="p-3 text-left">{{ __('Actions') }}</th>
+                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">#
+                    </th>
+                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                        {{ __('Student') }}</th>
+                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                        {{ __('Discussion Date') }}</th>
+                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                        {{ __('Committee Decision') }}</th>
+                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                        {{ __('Department') }}</th>
+                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                        {{ __('Student Status') }}</th>
+                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
+                        {{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
                 @forelse ($students as $step)
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3">{{ $step->student->first_name . ' ' . $step->student->last_name }}</td>
-                        <td class="p-3">{{ $step->discussion_date ?? __('Not specified') }}</td>
-                        <td class="p-3">{{ $step->committee_decision ?? __('Not available') }}</td>
-                        <td class="p-3">{{ $step->student->department->name ?? __('Not available') }}</td>
-                        <td class="p-3">
-                            @if ($step->post_graduation_status === 'graduate')
-                                <span class="text-green-600 font-medium">{{ __('Graduate') }}</span>
-                            @elseif ($step->post_graduation_status === 'fail')
-                                <span class="text-red-600 font-medium">{{ __('Fail') }}</span>
+                    <tr class="hover:bg-gray-50 transition duration-200">
+                        <td class="py-4 px-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
+                        <td class="py-4 px-4 text-sm text-gray-700">
+                            @if ($step->student)
+                                {{ $step->student->full_name }}
                             @else
-                                <span class="text-yellow-600 font-medium">{{ __('Pending review') }}</span>
+                                <span
+                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                                    {{ __('Deleted student') }}
+                                </span>
+                            @endif
+                        </td>
+                        <td class="py-4 px-4 text-sm text-gray-700">{{ $step->discussion_date ?? __('Not specified') }}
+                        </td>
+                        <td class="py-4 px-4 text-sm text-gray-700">
+                            {{ $step->committee_decision ?? __('Not available') }}</td>
+                        <td class="py-4 px-4 text-sm text-gray-700">
+                            {{ $step->student->department->name ?? __('Not available') }}</td>
+                        <td class="py-4 px-4 text-sm text-gray-700">
+                            @if ($step->post_graduation_status === 'graduate')
+                                <span
+                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 text-green-800">
+                                    {{ __('Graduate') }}
+                                </span>
+                            @elseif ($step->post_graduation_status === 'fail')
+                                <span
+                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 text-red-800">
+                                    {{ __('Fail') }}
+                                </span>
+                            @else
+                                <span
+                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    {{ __('Pending Review') }}
+                                </span>
                             @endif
                         </td>
                         @role('admin')
-                            <td class="p-3 flex space-x-2">
+                            <td class="py-4 px-4 text-sm text-gray-700 flex space-x-2">
                                 <a href="{{ route('admin.post-graduation.show', $step->id) }}"
-                                    class="bg-yellow-500 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-yellow-600 transition duration-200">
+                                    class="bg-yellow-500 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-yellow-600 transition duration-200 mx-2"
+                                    title="{{ __('View or Edit this Post Graduation Step') }}">
                                     {{ __('View/Edit') }}
                                 </a>
                                 <button onclick="openDeleteModal({{ $step->id }})"
-                                    class="bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-red-600 transition duration-200">
+                                    class="bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-red-600 transition duration-200"
+                                    title="{{ __('Delete this Post Graduation Step') }}">
                                     {{ __('Delete') }}
                                 </button>
                             </td>
                         @else
-                            <td class="p-3">
+                            <td class="py-4 px-4 text-sm text-gray-700">
                                 <a href="{{ route('super-admin.post-graduation.show', $step->id) }}"
-                                    class="text-blue-500 hover:underline">{{ __('View') }}</a>
+                                    class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg"
+                                    title="{{ __('View detailed information about this Post Graduation Step') }}">{{ __('View') }}</a>
                             </td>
                         @endrole
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-3 text-center text-gray-500">{{ __('No data available') }}</td>
+                        <td colspan="6" class="py-4 px-4 text-sm text-gray-700 text-center text-gray-500">
+                            {{ __('No data available') }}</td>
                     </tr>
                 @endforelse
             </tbody>

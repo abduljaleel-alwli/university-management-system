@@ -394,14 +394,14 @@
                                                 @role('super-admin')
                                                     @isset($notification->data['super-url'])
                                                         <a href="{{ $notification->data['super-url'] }}"
-                                                            class="inline-block bg-blue-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition">
+                                                            class="inline-block  mx-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition">
                                                             {{ __('View Student') }}
                                                         </a>
                                                     @endisset
                                                 @else
                                                     @isset($notification->data['url'])
                                                         <a href="{{ $notification->data['url'] }}"
-                                                            class="inline-block bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition">
+                                                            class="inline-block  mx-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition">
                                                             {{ __('View Student') }}
                                                         </a>
                                                     @endisset
@@ -419,7 +419,7 @@
                                                 @role('super-admin')
                                                     @isset($notification->data['students-super-url'])
                                                         <a href="{{ $notification->data['students-super-url'] }}"
-                                                            class="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition"
+                                                            class=" mx-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-700 transition"
                                                             style="margin: 0 px">
                                                             {{ __('View Student') }}
                                                         </a>
@@ -434,16 +434,16 @@
                                                 @else
                                                     @isset($notification->data['students-url'])
                                                         <a href="{{ $notification->data['students-url'] }}"
-                                                            class="bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition"
+                                                            class=" mx-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition"
                                                             style="margin: 0 px">
                                                             {{ __('View Student') }}
                                                         </a>
                                                     @endisset
                                                     @isset($notification->data['graduation-url'])
                                                         <a href="{{ $notification->data['graduation-url'] }}"
-                                                            class="bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition"
+                                                            class=" mx-2 bg-blue-600 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition"
                                                             style="margin: 0 px">
-                                                            {{ __('View Discussion') }}
+                                                            {{ __('View Graduation') }}
                                                         </a>
                                                     @endisset
                                                 @endrole
@@ -463,7 +463,7 @@
                                                     <strong>{{ $student ? $student->first_name . ' ' . $student->last_name : __('Unknown') }}</strong>
                                                 </p>
                                                 <a href="/panel/students/{{ $student->id }}"
-                                                    class="mt-2 inline-block bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition">
+                                                    class="mt-2 inline-block  mx-2 bg-blue-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-blue-600 transition">
                                                     {{ __('View Student') }}
                                                 </a>
                                             @endrole
@@ -493,26 +493,65 @@
                 <!-- قائمة المستخدمين المضافين -->
                 <div class="bg-white p-6 shadow-soft-xl rounded-2xl">
                     <h3 class="text-xl font-bold mb-4 text-gray-800">{{ __('Latest Added Users') }}</h3>
+                    <div class="overflow-x-auto rounded-lg">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Name') }}</th>
+                                    <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Email') }}</th>
+                                    <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Role') }}</th>
+                                    <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Created At') }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ is_array($latestUsers) }}
+                                @if (!empty($latestUsers))
+                                    @foreach ($latestUsers as $user)
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="p-3 border-t text-sm text-gray-700">{{ $user->name }}</td>
+                                            <td class="p-3 border-t text-sm text-gray-700">{{ $user->email }}</td>
+                                            <td class="p-3 border-t text-sm text-gray-700">
+                                                {{ implode(', ', $user->getRoleNames()->toArray()) }}
+                                            </td>
+                                            <td class="p-3 border-t text-sm text-gray-700">
+                                                {{ $user->created_at->format('Y-m-d') }}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
+                                            {{ __('No data available') }}
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @endrole
+
+            <!-- عدد الطلاب في كل قسم -->
+            <div class="bg-white p-6 shadow-soft-xl rounded-2xl">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">{{ __('Number of Students in Each Department') }}
+                </h3>
+                <div class="overflow-x-auto rounded-lg">
                     <table class="w-full border-collapse">
                         <thead>
                             <tr class="bg-gray-50">
-                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Name') }}</th>
-                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Email') }}</th>
-                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Role') }}</th>
-                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Created At') }}</th>
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Department') }}
+                                </th>
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">
+                                    {{ __('Number of Students') }}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (!empty($latestUsers) && is_array($latestUsers))
-                                @foreach ($latestUsers as $user)
+                            @if (!empty($studentsPerDepartment))
+                                @foreach ($studentsPerDepartment as $dept)
                                     <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="p-3 border-t text-sm text-gray-700">{{ $user->name }}</td>
-                                        <td class="p-3 border-t text-sm text-gray-700">{{ $user->email }}</td>
-                                        <td class="p-3 border-t text-sm text-gray-700">
-                                            {{ implode(', ', $user->getRoleNames()->toArray()) }}
+                                        <td class="p-3 border-t text-sm text-gray-700">{{ $dept->name }}</td>
+                                        <td class="p-3 border-t text-sm text-gray-700">{{ $dept->student->count() }}
                                         </td>
-                                        <td class="p-3 border-t text-sm text-gray-700">
-                                            {{ $user->created_at->format('Y-m-d') }}</td>
                                     </tr>
                                 @endforeach
                             @else
@@ -525,143 +564,142 @@
                         </tbody>
                     </table>
                 </div>
-            @endrole
-
-            <!-- عدد الطلاب في كل قسم -->
-            <div class="bg-white p-6 shadow-soft-xl rounded-2xl">
-                <h3 class="text-xl font-bold mb-4 text-gray-800">{{ __('Number of Students in Each Department') }}
-                </h3>
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Department') }}</th>
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">
-                                {{ __('Number of Students') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!empty($studentsPerDepartment) && is_array($studentsPerDepartment))
-                            @foreach ($studentsPerDepartment as $dept)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border-t text-sm text-gray-700">{{ $dept->name }}</td>
-                                    <td class="p-3 border-t text-sm text-gray-700">{{ $dept->student->count() }}</td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
-                                    {{ __('No data available') }}
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
             </div>
 
 
             <!-- حالة الطلاب -->
             <div class="bg-white p-6 shadow-soft-xl rounded-2xl">
-                <h3 class="text-xl font-bold mb-4 text-gray-800">{{ __('Student Status') }}</h3>
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Status') }}</th>
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">
-                                {{ __('Number of Students') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!empty($latestStudents) && is_array($latestStudents))
-                            @foreach ($studentsByStatus as $status => $count)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border-t text-sm text-gray-700">
-                                        @if ($status == 'suspended')
-                                            {{ __('Suspended') }}
-                                        @elseif($status == 'pending_review')
-                                            {{ __('Pending Review') }}
-                                        @else
-                                            {{ __('Active') }}
-                                        @endif
-                                    </td>
-                                    <td class="p-3 border-t text-sm text-gray-700">{{ $count }}</td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
-                                    {{ __('No data available') }}
-                                </td>
+                <h3 class="text-xl font-bold mb-4 text-gray-800">{{ __('Students Status') }}</h3>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Status') }}</th>
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">
+                                    {{ __('Number of Students') }}</th>
                             </tr>
-                        @endif
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @if (!empty($latestStudents))
+                                @foreach ($studentsByStatus as $status => $count)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="p-3 border-t text-sm text-gray-700">
+                                            @if ($status == 'graduate')
+                                                <span
+                                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 text-green-800">
+                                                    {{ __('Graduate') }}
+                                                </span>
+                                            @elseif($status == 'fail')
+                                                <span
+                                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 text-red-800">
+                                                    {{ __('Fail') }}
+                                                </span>
+                                            @elseif ($status == 'active')
+                                                <span
+                                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                    {{ __('Active') }}
+                                                </span>
+                                            @elseif ($status == 'suspended')
+                                                <span
+                                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                    {{ __('Suspended') }}
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                    {{ __('Pending Review') }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="p-3 border-t text-sm text-gray-700">{{ $count }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
+                                        {{ __('No data available') }}
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- قائمة آخر الطلاب المضافين -->
             <div class="bg-white p-6 shadow-soft-xl rounded-2xl">
                 <h3 class="text-xl font-bold mb-4 text-gray-800">{{ __('Latest Added Students') }}</h3>
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Name') }}</th>
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Department') }}</th>
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Added Date') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!empty($latestStudents) && is_array($latestStudents))
-                            @foreach ($latestStudents as $student)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border-t text-sm text-gray-700">{{ $student->first_name }}
-                                        {{ $student->last_name }}</td>
-                                    <td class="p-3 border-t text-sm text-gray-700">{{ $student->department->name }}
-                                    </td>
-                                    <td class="p-3 border-t text-sm text-gray-700">
-                                        {{ $student->created_at->format('Y-m-d') }}</td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
-                                    {{ __('No data available') }}
-                                </td>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Name') }}</th>
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Department') }}
+                                </th>
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Added Date') }}
+                                </th>
                             </tr>
-                        @endif
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @if (!empty($latestStudents))
+                                @foreach ($latestStudents as $student)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="p-3 border-t text-sm text-gray-700">{{ $student->first_name }}
+                                            {{ $student->last_name }}</td>
+                                        <td class="p-3 border-t text-sm text-gray-700">
+                                            {{ $student->department->name }}
+                                        </td>
+                                        <td class="p-3 border-t text-sm text-gray-700">
+                                            {{ $student->created_at->format('Y-m-d') }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
+                                        {{ __('No data available') }}
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- أحدث الأبحاث المسجلة -->
             <div class="bg-white p-6 shadow-soft-xl rounded-2xl">
                 <h3 class="text-xl font-bold mb-4 text-gray-800">{{ __('Latest Registered Researches') }}</h3>
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Title') }}</th>
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Department') }}</th>
-                            <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Date') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!empty($latestResearches) && is_array($latestResearches))
-                            @foreach ($latestResearches as $research)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="p-3 border-t text-sm text-gray-700">{{ $research->title }}</td>
-                                    <td class="p-3 border-t text-sm text-gray-700">{{ $research->department->name }}
-                                    </td>
-                                    <td class="p-3 border-t text-sm text-gray-700">
-                                        {{ $research->created_at->format('Y-m-d') }}</td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
-                                    {{ __('No data available') }}
-                                </td>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Title') }}</th>
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Department') }}
+                                </th>
+                                <th class="p-3 text-left text-sm font-semibold text-gray-600">{{ __('Date') }}</th>
                             </tr>
-                        @endif
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @if (!empty($latestResearches))
+                                @foreach ($latestResearches as $research)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="p-3 border-t text-sm text-gray-700">{{ $research->title }}</td>
+                                        <td class="p-3 border-t text-sm text-gray-700">
+                                            {{ $research->department->name }}
+                                        </td>
+                                        <td class="p-3 border-t text-sm text-gray-700">
+                                            {{ $research->created_at->format('Y-m-d') }}</td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="2" class="p-3 border-t text-sm text-gray-700 text-center">
+                                        {{ __('No data available') }}
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         </div>

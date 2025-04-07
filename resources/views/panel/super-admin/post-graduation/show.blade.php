@@ -6,7 +6,7 @@
         </h2>
     </x-slot>
 
-    @livewire('post-graduation-steps', ['student_id' => $PostGraduationStep->student->id])
+    @livewire('post-graduation-steps', ['student_id' => $PostGraduationStep->student ?  $PostGraduationStep->student->id : null])
 
 </x-app-layout>
 

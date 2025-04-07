@@ -25,7 +25,7 @@ class Student extends Model
         'admission_channel', // خاصة أو عامة
         'academic_stage', // السنة التحضيرية أو السنة البحثية
         'status', // مستمر، مؤجل، أو قيد المراجعة
-        'specialization_type',
+        'specialization_type_id',
         'notes',
         'study_end_date',
         'start_date',
@@ -74,9 +74,16 @@ class Student extends Model
         return $this->belongsTo(Department::class);
     }
 
+    // --> payment
     public function payment()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    // --> specializationType
+    public function specializationType()
+    {
+        return $this->belongsTo(SpecializationType::class);
     }
 
     // --> author
@@ -96,7 +103,6 @@ class Student extends Model
     {
         return $this->hasOne(PostGraduationStep::class);
     }
-
 
     /**
      * الحصول على القيمة المترجمة لأي حقل بناءً على اللغة الحالية.
@@ -180,16 +186,6 @@ class Student extends Model
             'active' => __('Active'),              // مستمر
             'suspended' => __('Suspended'),        // مؤجل
             'pending_review' => __('Pending Review'), // قيد المراجعة
-            default => __('Not Available'),
-        };
-    }
-
-    public function getSpecializationTypeTranslatedAttribute()
-    {
-        return match ($this->specialization_type) {
-            'graduation_project' => __('Graduation Project'), // مشروع تخرج
-            'pure_sciences' => __('Pure Sciences'),          // علوم صرفة
-            'teaching_methods' => __('Teaching Methods'),    // طرائق تدريس
             default => __('Not Available'),
         };
     }

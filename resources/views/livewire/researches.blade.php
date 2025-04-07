@@ -5,12 +5,32 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold text-gray-800">{{ __('Researches Management') }}</h2>
 
-                @if (Auth::user()->hasRole('admin'))
-                    <a href="{{ route('admin.researches.create') }}"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md hover:shadow-lg btn-bg">
-                        {{ __('Add New Research') }}
-                    </a>
-                @endif
+                <div class="flex justify-between items-center mb-4">
+                    @if (Auth::user()->hasRole('admin'))
+                        <div class="mx-3">
+                            <a href="{{ route('admin.researches.create') }}"
+                                class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition shadow-md hover:shadow-lg btn-bg">
+                                {{ __('Add New Research') }}
+                            </a>
+                        </div>
+                    @endif
+                    <button wire:click="searchResearches" wire:loading.attr="disabled"
+                        class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl shadow-md font-semibold
+                                    hover:bg-blue-800 transition duration-200 ease-in-out hover:shadow-lg
+                                    whitespace-nowrap btn-bg">
+                        <span>{{ __('Search') }}</span>
+                        <span wire:loading wire:target="searchResearches">
+                            <svg class="animate-spin h-5 w-5 text-white transition-transform duration-500"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
             </div>
 
             <!-- الحقول -->
@@ -36,10 +56,6 @@
                     <option value="published">{{ __('Published') }}</option>
                     <option value="accepted">{{ __('Accepted') }}</option>
                 </select>
-                <button wire:click="searchResearches"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-md hover:shadow-lg btn-bg">
-                    {{ __('Search') }}
-                </button>
             </div>
         </div>
 
@@ -76,7 +92,16 @@
                             <tr class="hover:bg-gray-100 transition">
                                 <td class="p-4 text-sm text-gray-900">{{ $loop->iteration }}</td>
                                 <td class="p-4 text-sm text-gray-900">{{ $research->title }}</td>
-                                <td class="p-4 whitespace-nowrap text-sm text-gray-900">{{ $research->student->full_name ?? '-' }}</td>
+                                <td class="p-4 whitespace-nowrap text-sm text-gray-900">
+                                    @if ($research->student)
+                                        {{ $research->student->full_name }}
+                                    @else
+                                        <span
+                                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                                            {{ __('Deleted student') }}
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="p-4 text-sm text-gray-900">{{ $research->journal_name }}</td>
                                 <td class="p-4 text-sm text-gray-900">{{ $research->publication_date }}</td>
                                 <td class="p-4 text-sm text-gray-900">
@@ -87,36 +112,46 @@
                                 </td>
                                 <td class="p-4 text-sm text-gray-900">{{ $research->department->name }}</td>
                                 @if (Auth::user()->hasRole('super-admin'))
-                                    <td class="p-4 text-sm text-gray-900">{{ $research->author->name }}</td>
+                                    @isset($research->author->name)
+                                        <td class="p-4 text-sm text-gray-900">{{ $research->author->name }}</td>
+                                    @else
+                                        <td class="p-4 text-sm text-gray-900">{{ __('Not Available') }}</td>
+                                    @endisset
                                 @endif
                                 <td class="p-4 flex space-x-2">
                                     @if (isset($research->research_url))
-                                        <a href="{{ $research->research_url }}" title="download"
-                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition" target="_blank" download>
+                                        <a href="{{ $research->research_url }}" title="Download Research"
+                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition mx-2"
+                                            target="_blank" download>
                                             {{ __('Download') }}
                                         </a>
                                     @else
-                                        <a href="" title="download"
-                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition disabled" disabled="disabled">
+                                        <a href="" title="Download Research"
+                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition mx-2 disabled"
+                                            disabled="disabled">
                                             {{ __('Download') }}
                                         </a>
                                     @endif
 
                                     @if (Auth::user()->hasRole('super-admin'))
                                         <a href="{{ route('super-admin.researches.show', $research->id) }}"
+                                            title="{{ __('Click to view details of this research') }}"
                                             class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg">
                                             {{ __('Show') }}
                                         </a>
                                     @else
                                         <button onclick="openDeleteModal({{ $research->id }})"
+                                            title="{{ __('Click to delete this research') }}"
                                             class="bg-red-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700 transition">
                                             {{ __('Delete') }}
                                         </button>
                                         <a href="{{ route('admin.researches.edit', $research->id) }}"
+                                            title="{{ __('Click to edit this research') }}"
                                             class="bg-yellow-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-yellow-600 transition">
                                             {{ __('Edit') }}
                                         </a>
                                         <a href="{{ route('admin.researches.show', $research->id) }}"
+                                            title="{{ __('Click to view details of this research') }}"
                                             class="bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition">
                                             {{ __('Show') }}
                                         </a>

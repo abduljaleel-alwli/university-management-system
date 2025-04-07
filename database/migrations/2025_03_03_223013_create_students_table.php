@@ -30,11 +30,11 @@ return new class extends Migration {
             $table->date('start_date');
             $table->date('study_end_date')->nullable();
             $table->integer('remaining_study_days')->nullable();
-            $table->date('first_extension_date')->nullable(); // التمديد الأول
-            $table->date('second_extension_date')->nullable(); // التمديد الثاني
-            $table->foreignId('department_id')->constrained(); // ربط بالقسم
-            $table->foreignId('author_id')->nullable()->constrained('users'); // ربط بالمؤلف
-            $table->foreignId('editor_id')->nullable()->constrained('users'); // ربط بالمحرر
+            $table->date('first_extension_date')->nullable();
+            $table->date('second_extension_date')->nullable();
+            $table->foreignId('department_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('editor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -31,9 +31,16 @@
                 <div class="flex flex-col space-y-2">
                     <label class="text-sm font-medium text-gray-500">{{ __('Added by') }}</label>
                     <div class="p-3 bg-blue-50 border border-gray-200 rounded-lg text-gray-800">
-                        <span class="px-3 py-1 rounded-full text-white bg-green-500">
-                            {{ $research->author->name }}
-                        </span>
+                        @if ($research->author)
+                            <span class="px-3 py-1 rounded-full text-white bg-green-500">
+                                {{ $research->author->name }}
+                            </span>
+                        @else
+                            <span
+                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                                {{ __('Deleted user') }}
+                            </span>
+                        @endif
                     </div>
                 </div>
 
@@ -72,7 +79,14 @@
             <div class="flex flex-col space-y-2">
                 <label class="text-sm font-medium text-gray-500">{{ __('Student') }}</label>
                 <div class="p-3 bg-blue-50 border border-gray-200 rounded-lg text-gray-800">
-                    {{ $research->student->first_name }} {{ $research->student->last_name }}
+                    @if ($research->student)
+                        {{ $research->student->full_name }}
+                    @else
+                        <span
+                            class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                            {{ __('Deleted student') }}
+                        </span>
+                    @endif
                 </div>
             </div>
 
@@ -156,47 +170,56 @@
     <!-- بيانات الطالب -->
     <div class="bg-white shadow-soft-xl rounded-2xl p-6 my-10">
         <h2 class="text-2xl font-bold text-gray-800 pb-6">{{ __('Student Details') }}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @php
-                $fields = [
-                    'first_name_ar' => __('First Name (Arabic)'),
-                    'first_name_en' => __('First Name (English)'),
-                    'father_name_ar' => __('Father Name (Arabic)'),
-                    'father_name_en' => __('Father Name (English)'),
-                    'grandfather_name_ar' => __('Grandfather Name (Arabic)'),
-                    'grandfather_name_en' => __('Grandfather Name (English)'),
-                    'last_name_ar' => __('Last Name (Arabic)'),
-                    'last_name_en' => __('Last Name (English)'),
-                    'email' => __('Email'),
-                    'phone_number' => __('Phone Number'),
-                ];
-            @endphp
+        @if ($research->student)
+            {{ $research->student->full_name }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            @foreach ($fields as $key => $label)
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">{{ $label }}</label>
-                    <div class="mt-1 p-2 bg-blue-50 rounded-lg">
-                        <p class="text-gray-900">{{ $research->student->$key }}</p>
+                @php
+                    $fields = [
+                        'first_name_ar' => __('First Name (Arabic)'),
+                        'first_name_en' => __('First Name (English)'),
+                        'father_name_ar' => __('Father Name (Arabic)'),
+                        'father_name_en' => __('Father Name (English)'),
+                        'grandfather_name_ar' => __('Grandfather Name (Arabic)'),
+                        'grandfather_name_en' => __('Grandfather Name (English)'),
+                        'last_name_ar' => __('Last Name (Arabic)'),
+                        'last_name_en' => __('Last Name (English)'),
+                        'email' => __('Email'),
+                        'phone_number' => __('Phone Number'),
+                    ];
+                @endphp
+
+                @foreach ($fields as $key => $label)
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">{{ $label }}</label>
+                        <div class="mt-1 p-2 bg-blue-50 rounded-lg">
+                            <p class="text-gray-900">{{ $research->student->$key }}</p>
+                        </div>
                     </div>
+                @endforeach
+            </div>
+            @role('admin')
+                <div class="flex">
+                    <a href="{{ route('admin.students.show', ['student' => $research->student->id]) }}"
+                        class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-blue-700 transition btn-bg">
+                        {{ __('View') }}
+                    </a>
+                    <a href="{{ route('admin.students.edit', ['student' => $research->student->id]) }}"
+                        class="mx-2 block bg-yellow-400 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-yellow-500 transition">
+                        {{ __('Edit') }}
+                    </a>
                 </div>
-            @endforeach
-        </div>
-        @role('admin')
-            <div class="flex">
-                <a href="{{ route('admin.students.show', ['student' => $research->student->id]) }}"
+            @elseif('super-admin')
+                <a href="{{ route('super-admin.students.show', ['student' => $research->student->id]) }}"
                     class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-blue-700 transition btn-bg">
                     {{ __('View') }}
                 </a>
-                <a href="{{ route('admin.students.edit', ['student' => $research->student->id]) }}"
-                    class="mx-2 block bg-yellow-400 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-yellow-500 transition">
-                    {{ __('Edit') }}
-                </a>
-            </div>
-        @elseif('super-admin')
-            <a href="{{ route('super-admin.students.show', ['student' => $research->student->id]) }}"
-                class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-blue-700 transition btn-bg">
-                {{ __('View') }}
-            </a>
-        @endrole
+            @endrole
+        @else
+            <span
+                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                {{ __('Deleted student') }}
+            </span>
+        @endif
     </div>
 </div>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('post_graduation_steps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade'); // ربطه بالطالب
+            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
             $table->date('discussion_date')->nullable(); // موعد المناقشة
             $table->string('committee_decision')->nullable(); // قرار اللجنة
             $table->boolean('clearance')->default(false); // براءة الذمة

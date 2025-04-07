@@ -85,8 +85,11 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <x-label for="start_date" value="{{ __('Start Date') }}" />
-                    <x-input id="start_date" class="block mt-1 w-full" type="date" name="start_date"
-                        :value="$student->start_date" required />
+                    <x-input id="start_date"
+                        class="block mt-1 w-full {{ $student->status == 'suspended' ? 'disabled' : '' }}"
+                        type="date" name="start_date" :value="$student->start_date" required />
+                    <small
+                        class="text-yellow-600">{{ $student->status == 'suspended' ? __('You cannot change the start date while the student is suspended.') : '' }}</small>
                 </div>
 
                 <div>
@@ -126,31 +129,45 @@
                 <div>
                     <x-label for="status" value="{{ __('Status') }}" />
                     <x-select id="status" name="status" class="block mt-1 w-full" required>
+                        {{-- حالات ما قبل التخرج --}}
                         <option value="active" {{ $student->status == 'active' ? 'selected' : '' }}>
                             {{ __('Active') }}
                         </option>
                         <option value="suspended" {{ $student->status == 'suspended' ? 'selected' : '' }}>
-                            {{ __('Suspended') }}</option>
+                            {{ __('Suspended') }}
+                        </option>
+
                         <option value="pending_review" {{ $student->status == 'pending_review' ? 'selected' : '' }}>
-                            {{ __('Pending Review') }}</option>
+                            {{ __('Pending Review') }}
+                        </option>
+
+                        {{-- حالات ما بعد التخرج --}}
+                        @if ($hasPostGraduation)
+                            <option value="graduate"
+                                {{ $student->postGraduationStep->post_graduation_status == 'graduate' ? 'selected' : '' }}>
+                                {{ __('Graduate') }}
+                            </option>
+                            <option value="fail" {{ $student->postGraduationStep->post_graduation_status == 'fail' ? 'selected' : '' }}>
+                                {{ __('Failed') }}
+                            </option>
+                            <option value="pending_review_pg"
+                                {{ $student->postGraduationStep->post_graduation_status == 'pending_review' ? 'selected' : '' }}>
+                                {{ __('Pending Review (Post Graduation)') }}
+                            </option>
+                        @endif
                     </x-select>
                 </div>
 
                 <div>
-                    <x-label for="specialization_type" value="{{ __('Specialization Type') }}" />
-                    <x-select id="specialization_type" name="specialization_type" class="block mt-1 w-full" required>
-                        <option value="graduation_project"
-                            {{ $student->specialization_type == 'graduation_project' ? 'selected' : '' }}>
-                            {{ __('Graduation Project') }}
-                        </option>
-                        <option value="pure_sciences"
-                            {{ $student->specialization_type == 'pure_sciences' ? 'selected' : '' }}>
-                            {{ __('Pure Sciences') }}
-                        </option>
-                        <option value="teaching_methods"
-                            {{ $student->specialization_type == 'teaching_methods' ? 'selected' : '' }}>
-                            {{ __('Teaching Methods') }}
-                        </option>
+                    <x-label for="specialization_type_id" :value="__('Specialization Type')" />
+                    <x-select id="specialization_type_id" name="specialization_type_id" class="block mt-1 w-full"
+                        required>
+                        <option value="">{{ __('Select Specialization Type') }}</option>
+                        @foreach ($specializationTypes as $type)
+                            <option value="{{ $type->id }}" @selected(old('specialization_type_id', $student->specialization_type_id) == $type->id)>
+                                {{ $type->name }}
+                            </option>
+                        @endforeach
                     </x-select>
                 </div>
             </div>
@@ -171,8 +188,9 @@
                     $secondAdded = $student->second_extension_date;
                 @endphp
 
+
                 @if (!$firstAdded)
-                    <div id="first_extension" class="hidden flex items-center gap-2 p-4 bg-gray-100 rounded-lg  mt-2">
+                    <div id="first_extension" class="hidden flex items-center gap-2 p-4 bg-gray-100 rounded-lg mt-2">
                         <x-label for="first_extension_date" value="{{ __('First Extension') }}"
                             class="text-gray-600" />
                         <x-input id="first_extension_date" type="checkbox" name="first_extension_date"
@@ -198,9 +216,15 @@
                 @endif
 
                 <button id="add-extension-btn" type="button"
-                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md btn-bg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md btn-bg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 {{ $student->status == 'suspended' ? 'opacity-60' : '' }}"
+                    {{ $student->status == 'suspended' ? 'disabled' : '' }}>
                     {{ !$firstAdded ? __('Add First Extension') : __('Add Second Extension') }}
                 </button>
+                @if ($student->status == 'suspended')
+                    <p class="mt-4 text-sm text-yellow-600">
+                        {{ __('You cannot add an extension while the student is suspended.') }}
+                    </p>
+                @endif
             </div>
             {{-- ------------ --}}
 

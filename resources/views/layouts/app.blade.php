@@ -1,5 +1,8 @@
+@php
+$settings = app_settings();
+@endphp
+
 <!DOCTYPE html>
-{{-- @if (\Request::is('rtl')) --}}
 @if (isRtl())
     <html dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @else
@@ -11,12 +14,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} |  {{ isset($header) ? strip_tags($header) : ''}} </title>
+    <title>{{ $settings->site_name ? $settings->site_name : 'University System' }} | {{ isset($header) ? strip_tags($header) : '' }} </title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}" />
-    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset($settings->favicon) }}" />
 
     @if (isRtl())
         <!-- Google Fonts -->
@@ -31,15 +33,6 @@
     <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
 
-    <!-- Popper -->
-    {{-- <script src="https://unpkg.com/@popperjs/core@2"></script> --}}
-
-    <!-- Tailwind CSS -->
-    {{-- <script src="https://unpkg.com/@tailwindcss/browser@4"></script> --}}
-
-    <!-- jquery -->
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
-
     <!-- FontAwesome -->
     {{-- <script src="https://kit.fontawesome.com/639743d220.js" crossorigin="anonymous"></script> --}}
 
@@ -49,6 +42,14 @@
     {{-- <link href="{{ asset('assets/css/perfect-scrollbar.css') }}" rel="stylesheet" /> --}}
 
     <!-- Style CSS -->
+    <style>
+        :root {
+            --primary-color: {{ $settings->primary_color }};
+            --secondary-color: {{ $settings->secondary_color }};
+            --accent-color: {{ $settings->accent_color }};
+            --background-color: {{ $settings->background_color }};
+        }
+    </style>
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
     <!-- Scripts -->
@@ -82,7 +83,7 @@
                             @if (session('success'))
                                 <svg width="20px" height="20px" viewBox="0 0 1024 1024" class="icon" version="1.1"
                                     xmlns="http://www.w3.org/2000/svg" fill="#000000"
-                                    style="scale: 1.3; margin-top: -9px;">
+                                    style="scale: 1.3; margin: 0 7px; margin-top: -9px;">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                                     <g id="SVGRepo_iconCarrier">
@@ -96,7 +97,8 @@
                                 </svg>
                             @elseif (session('error'))
                                 <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" style="margin-top: -9px; scale: 1.3;">
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    style="margin: 0 7px; margin-top: -9px; scale: 1.3;">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                                     <g id="SVGRepo_iconCarrier">
@@ -159,6 +161,7 @@
     @stack('modals')
 
     @livewireScripts
+    @stack('scripts')
     @yield('footer-script')
 
     @if (session('success') || session('error') || session()->has('message'))

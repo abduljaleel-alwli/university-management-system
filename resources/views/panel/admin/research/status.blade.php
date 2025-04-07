@@ -60,18 +60,22 @@
                                 </td>
                                 <td class="p-4 text-sm text-gray-900">{{ $research->department->name }}</td>
                                 @if (Auth::user()->hasRole('super-admin'))
-                                    <td class="p-4 text-sm text-gray-900">{{ $research->author->name }}</td>
+                                    @isset($research->author->name)
+                                        <td class="p-4 text-sm text-gray-900">{{ $research->author->name }}</td>
+                                    @else
+                                        <td class="p-4 text-sm text-gray-900">{{ __('Not Available') }}</td>
+                                    @endisset
                                 @endif
                                 <td class="p-4 flex space-x-2">
                                     @if (isset($research->research_url))
-                                        <a href="{{ $research->research_url }}" title="download"
-                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition"
+                                        <a href="{{ $research->research_url }}" title="Download Research"
+                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition mx-2"
                                             target="_blank" download>
                                             {{ __('Download') }}
                                         </a>
                                     @else
-                                        <a href="" title="download"
-                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition disabled"
+                                        <a href="" title="Download Research"
+                                            class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 transition mx-2 disabled"
                                             disabled="disabled">
                                             {{ __('Download') }}
                                         </a>
@@ -79,19 +83,23 @@
 
                                     @if (Auth::user()->hasRole('super-admin'))
                                         <a href="{{ route('super-admin.researches.show', $research->id) }}"
+                                            title="{{ __('Click to view details of this research') }}"
                                             class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700 transition btn-bg">
                                             {{ __('Show') }}
                                         </a>
                                     @else
                                         <button onclick="openDeleteModal({{ $research->id }})"
+                                            title="{{ __('Click to delete this research') }}"
                                             class="bg-red-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-red-700 transition">
                                             {{ __('Delete') }}
                                         </button>
                                         <a href="{{ route('admin.researches.edit', $research->id) }}"
+                                            title="{{ __('Click to edit this research') }}"
                                             class="bg-yellow-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-yellow-600 transition">
                                             {{ __('Edit') }}
                                         </a>
                                         <a href="{{ route('admin.researches.show', $research->id) }}"
+                                            title="{{ __('Click to view details of this research') }}"
                                             class="bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition">
                                             {{ __('Show') }}
                                         </a>

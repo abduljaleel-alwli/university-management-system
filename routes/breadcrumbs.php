@@ -158,6 +158,24 @@ Breadcrumbs::for('super-admin.departments.status', function (BreadcrumbTrail $tr
     $trail->push(__('Students With Status'), route('super-admin.departments.status', ['department' => $department, 'status' => $status]));
 });
 
+// Specialization Types
+Breadcrumbs::for('super-admin.specializations.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('panel');
+    $trail->push(__('Specializations'), route('super-admin.specializations.index'));
+});
+
+Breadcrumbs::for('super-admin.specializations.show', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('super-admin.specializations.index');
+    $trail->push(__('Specialization Details'), route('super-admin.specializations.show', $id));
+});
+
+Breadcrumbs::for('super-admin.specializations.edit', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('super-admin.specializations.index');
+    $trail->push(__('Edit Specialization'), route('super-admin.specializations.edit', $id));
+});
+
+
+
 // Reports
 Breadcrumbs::for('super-admin.reports.index', function (BreadcrumbTrail $trail) {
     $trail->parent('panel');
@@ -212,6 +230,12 @@ Breadcrumbs::for('super-admin.researches.show', function (BreadcrumbTrail $trail
 Breadcrumbs::for('super-admin.researches.status', function (BreadcrumbTrail $trail, $status) {
     $trail->parent('super-admin.researches.index');
     $trail->push(__('Researches With Status'), route('super-admin.researches.status', ['status' => $status]));
+});
+
+// Settings
+Breadcrumbs::for('super-admin.settings.index', function (BreadcrumbTrail $trail) {
+    $trail->parent('panel');
+    $trail->push(__('Settings'), route('super-admin.settings.index'));
 });
 
 // --> Admin Routes

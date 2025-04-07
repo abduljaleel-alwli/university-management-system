@@ -39,7 +39,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                 </span>
             </div>
 
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between notification-pagenation-list-box">
                 <div>
                     <p class="text-sm text-gray-700 leading-5 dark:text-gray-400">
                         <span>{!! __('Showing') !!}</span>
@@ -53,7 +53,7 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                 </div>
 
                 <div>
-                    <span class="relative z-0 inline-flex rtl:flex-row-reverse rounded-md shadow-sm">
+                    <span class="relative z-0 inline-flex rtl:flex-row-reverse rounded-md shadow-sm notification-pagenation-list">
                         <span>
                             {{-- Previous Page Link --}}
                             @if ($paginator->onFirstPage())

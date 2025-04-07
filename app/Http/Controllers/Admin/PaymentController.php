@@ -40,6 +40,10 @@ class PaymentController extends Controller
             return response()->json(['error' => __("You are not authorized")], 403);
         }
 
+        if ($student->admission_channel !== 'private') {
+            return response()->json(['error' => __('You cannot add a payment for this student.')], 422);
+        }
+
         $payment = Payment::create([
             'student_id' => $request->student_id,
             'department_id' => Auth::user()->department_id,

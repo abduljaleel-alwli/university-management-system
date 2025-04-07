@@ -14,12 +14,12 @@
             <div class="p-4">
                 <form id="departmentForm" onsubmit="submitForm(event)">
                     <div class="mb-4">
-                        <label for="name_ar" class="block text-sm font-medium text-gray-700">{{ __('Name (Arabic)') }}</label>
+                        <label for="name_ar" class="p-3 block text-sm font-medium text-gray-700">{{ __('Name (Arabic)') }}</label>
                         <input type="text" id="name_ar" name="name_ar"
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div class="mb-4">
-                        <label for="name_en" class="block text-sm font-medium text-gray-700">{{ __('Name (English)') }}</label>
+                        <label for="name_en" class="p-3 block text-sm font-medium text-gray-700">{{ __('Name (English)') }}</label>
                         <input type="text" id="name_en" name="name_en"
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>

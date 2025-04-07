@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\PostGraduationStepController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\ResearchController as AdminResearchController;
-use App\Http\Controllers\SendStudentEmailController;
+use App\Http\Controllers\Admin\SendStudentEmailController;
 use Illuminate\Support\Facades\Route;
 
 // ---> Admin Routes

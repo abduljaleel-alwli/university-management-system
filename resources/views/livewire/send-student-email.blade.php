@@ -24,7 +24,7 @@
         <form wire:submit.prevent="sendEmail">
             <!-- حقل العنوان -->
             <div class="mb-6">
-                <label for="subject" class="block text-gray-700 font-medium mb-2">{{ __('Subject') }}</label>
+                <label for="subject" class="pb-2" class="block text-gray-700 font-medium mb-2">{{ __('Subject') }}</label>
                 <input type="text" wire:model="subject" id="subject"
                     class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 @error('subject')
@@ -34,7 +34,7 @@
 
             <!-- حقل الرابط -->
             <div class="mb-6">
-                <label for="link" class="block text-gray-700 font-medium mb-2">{{ __('Link (optional)') }}</label>
+                <label for="link" class="pb-2" class="block text-gray-700 font-medium mb-2">{{ __('Link (optional)') }}</label>
                 <input type="url" wire:model="link" id="link"
                     class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://example.com">
@@ -45,7 +45,7 @@
 
             <!-- حقل الرسالة -->
             <div class="mb-6">
-                <label for="message" class="block text-gray-700 font-medium mb-2">{{ __('Message') }}</label>
+                <label for="message" class="pb-2" class="block text-gray-700 font-medium mb-2">{{ __('Message') }}</label>
                 <textarea wire:model="message" id="message" rows="4"
                     class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="{{ __('Write the message here') }}..."></textarea>
@@ -77,10 +77,28 @@
         <div class="px-4 mb-6 pb-6"
             style="box-shadow: rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset;">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="block text-gray-700 font-medium mb-2">{{ __('Choose Student') }}</h1>
-                <button wire:click="$refresh"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 ease-in-out btn-bg">
-                    {{ __('Search') }}
+                <div>
+                    <h1 class="block text-gray-700 font-medium mb-2">{{ __('Choose Student') }}</h1>
+                    @error('student_id')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <button wire:click="getStudentsProperty" wire:loading.attr="disabled"
+                    class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl shadow-md font-semibold
+                            hover:bg-blue-800 transition duration-200 ease-in-out hover:shadow-lg
+                            whitespace-nowrap btn-bg">
+                    <span>{{ __('Search') }}</span>
+                    <span wire:loading wire:target="getStudentsProperty">
+                        <svg class="animate-spin h-5 w-5 text-white transition-transform duration-500"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                    </span>
                 </button>
             </div>
 
@@ -97,11 +115,18 @@
         'study_type' => ['' => __('Study Type'), 'msc' => __('Master'), 'phd' => __('PhD')],
         'admission_channel' => ['' => __('Admission Channel'), 'private' => __('Private'), 'public' => __('Public')],
         'academic_stage' => ['' => __('Academic Stage'), 'preparatory' => __('Preparatory'), 'research' => __('Research')],
-        'status' => ['' => __('Status'), 'active' => __('Active'), 'suspended' => __('Suspended'), 'pending_review' => __('Pending Review')],
+        'status' => [
+            '' => __('Status'),
+            'active' => __('Active'),
+            'suspended' => __('Suspended'),
+            'pending_review' => __('Pending Review'),
+            'graduate' => __('Graduate'),
+            'fail' => __('Fail'),
+        ],
     ] as $field => $options)
                     @if ($field == 'status')
                         <div>
-                            <label for="status">{{ __('Status') }}</label>
+                            <label for="status" class="pb-2">{{ __('Status') }}</label>
                             <select wire:model="search.{{ $field }}"
                                 class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
                                 @foreach ($options as $value => $label)
@@ -121,12 +146,12 @@
 
                 <!-- حقول التاريخ -->
                 <div>
-                    <label for="start_date">{{ __('Start Date') }}</label>
+                    <label for="start_date" class="pb-2">{{ __('Start Date') }}</label>
                     <input type="date" wire:model="search.start_date"
                         class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
                 </div>
                 <div>
-                    <label for="study_end_date">{{ __('Study End Date') }}</label>
+                    <label for="study_end_date" class="pb-2">{{ __('Study End Date') }}</label>
                     <input type="date" wire:model="search.study_end_date"
                         class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
                 </div>
@@ -189,15 +214,32 @@
                                             $remainingMonths !== null && $remainingMonths <= 3 && $remainingMonths >= 0;
 
                                         $isSuspended = $student->status == 'suspended';
-                                        $isPendingReview = $student->status == 'pending_review';
+                                        $isPendingReview =
+                                            $student->status == 'pending_review' &&
+                                            !isset($student->postGraduationStep->id);
+
+                                        $isPendingReviewAndisPostGraduation =
+                                            $student->status == 'pending_review' &&
+                                            isset($student->postGraduationStep->id);
+
+                                        $status = null;
+                                        if ($student->postGraduationStep) {
+                                            $status = $student->postGraduationStep->post_graduation_status;
+                                        }
 
                                         $rowClass = '';
-                                        if ($isCloseToEnd) {
-                                            $rowClass = 'bg-red-50';
+                                        if ($status == 'graduate') {
+                                            $rowClass = 'bg-green-100';
+                                        } elseif ($status == 'fail') {
+                                            $rowClass = 'bg-red-100';
+                                        } elseif ($isCloseToEnd) {
+                                            $rowClass = 'bg-orange-500 is-close-to-end';
                                         } elseif ($isSuspended) {
-                                            $rowClass = 'bg-yellow-50';
+                                            $rowClass = 'bg-yellow-100';
                                         } elseif ($isPendingReview) {
-                                            $rowClass = 'bg-gradient-pending from-gray-100 to-gray-200';
+                                            $rowClass = 'bg-gradient-pending from-gray-100 to-gray-100';
+                                        } elseif ($isPendingReviewAndisPostGraduation) {
+                                            $rowClass = 'bg-gradient-pending-2 from-gray-100 to-gray-100';
                                         }
                                     @endphp
                                     <tr class="{{ $rowClass }}">
@@ -213,7 +255,17 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $student->department->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm status">
-                                            @if ($student->status == 'active')
+                                            @if ($status == 'graduate')
+                                                <span
+                                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 text-green-800">
+                                                    {{ __('Graduate') }}
+                                                </span>
+                                            @elseif($status == 'fail')
+                                                <span
+                                                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 text-red-800">
+                                                    {{ __('Fail') }}
+                                                </span>
+                                            @elseif ($student->status == 'active')
                                                 <span
                                                     class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     {{ __('Active') }}
@@ -231,7 +283,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $student->specialization_type_translated }}</td>
+                                            {{ $student->specializationType->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <input id="student_id_{{ $student->id }}" type="radio"
                                                 value="{{ $student->id }}" wire:model="student_id"

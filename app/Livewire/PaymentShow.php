@@ -28,26 +28,35 @@ class PaymentShow extends Component
 
     public function mount($paymentId)
     {
-        $payment = Payment::findOrFail($this->paymentId);
-        $student = $payment->student;
-
-        // التحقق من صلاحية المستخدم
-        if (Auth::user()->hasRole('admin')) {
-            if (Auth::user()->department_id !== $payment->department_id) {
-                abort(403, __("You don’t have permission."));
-            }
-        } elseif (!Auth::user()->hasRole('super-admin')) {
-            abort(403, __("You don’t have permission."));
-        }
-
-        $this->student = $student;
-        $this->studen_full_name = $student->first_name . ' '. $student->father_name . ' ' . $student->grandfather_name . ' ' . $student->last_name;
+        $payment = Payment::findOrFail($paymentId);
         $this->paymentId = $payment->id;
+
         $this->receipt_number = $payment->receipt_number;
         $this->amount = $payment->amount;
         $this->currency = $payment->currency;
         $this->payment_date = $payment->payment_date;
         $this->notes = $payment->notes;
+
+        $this->student = $payment->student;
+
+        if ($this->student) {
+            $this->student_id = $this->student->id;
+            $this->studen_full_name = $this->student->full_name ?? __('Deleted student');
+        } else {
+            $this->student_id = null;
+            $this->studen_full_name = __('No associated student');
+        }
+
+        if (Auth::user()->hasRole('admin') && empty($this->student)) {
+            return redirect()->route('admin.payments.index')->with('error', __('You don’t have permission.'));
+        }
+
+        // التحقق من صلاحية المستخدم
+        if (Auth::user()->hasRole('admin') && $payment->department_id !== Auth::user()->department_id) {
+            abort(403, __("You don’t have permission."));
+        } elseif (!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('admin')) {
+            abort(403, __("You don’t have permission."));
+        }
     }
 
     public function updatePayment()

@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\SpecializationTypeController;
 use App\Http\Controllers\SuperAdmin\Auth\UserController;
 use App\Http\Controllers\SuperAdmin\PaymentController as SuperAdminPaymentController;
 use App\Http\Controllers\SuperAdmin\ResearchController as SuperAdminResearchController;
 use App\Http\Controllers\SuperAdmin\DepartmentController;
 use App\Http\Controllers\SuperAdmin\ManageNotificationController;
 use App\Http\Controllers\SuperAdmin\PostGraduationController;
+use App\Http\Controllers\SuperAdmin\SettingController;
 use App\Http\Controllers\SuperAdmin\StudentReports;
 use App\Http\Controllers\SuperAdmin\SuperAdminStudentController;
 
@@ -33,6 +35,16 @@ Route::middleware(['permission:manage-departments'])->prefix('super/departments'
     Route::put('{id}', [DepartmentController::class, 'update'])->name('update');
     Route::delete('{id}', [DepartmentController::class, 'destroy'])->name('destroy');
     Route::get('/{department}/{status}', [DepartmentController::class, 'status'])->name('status');
+});
+
+// --> Sspecialization Type
+Route::prefix('super/specializations')->name('specializations.')->group(function () {
+    Route::get('/', [SpecializationTypeController::class, 'index'])->name('index');
+    Route::get('/refresh', [SpecializationTypeController::class, 'refresh'])->name('refresh');
+    Route::post('/', [SpecializationTypeController::class, 'store'])->name('store');
+    Route::get('{id}/show', [SpecializationTypeController::class, 'show'])->name('show');
+    Route::put('{id}', [SpecializationTypeController::class, 'update'])->name('update');
+    Route::delete('{id}', [SpecializationTypeController::class, 'destroy'])->name('destroy');
 });
 
 Route::middleware(['permission:generate-reports'])->prefix('reports')->name('reports.')->group(function () {
@@ -67,3 +79,6 @@ Route::middleware(['permission:view-all-data'])->group(function () {
 });
 
 
+Route::prefix('super/settings')->name('settings.')->group(function () {
+    Route::get('/', [SettingController::class, 'index'])->name('index');
+});

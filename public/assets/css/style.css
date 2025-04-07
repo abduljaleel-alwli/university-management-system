@@ -11,8 +11,40 @@
     justify-content: center;
 }
 
+.status span {
+    background: #dbfce7;
+
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+        rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+
+.is-close-to-end{
+    background: oklch(0.901 0.076 70.697);
+}
+
 .bg-gradient-pending {
-    background: linear-gradient(212deg, #f4aee8d6, #fff27d3b, #7dffac8c);
+    /* background: linear-gradient(295deg, #7dffac8c, #fff27d3b); */
+    /* background: linear-gradient(267deg, #a97dff5c, #fff8ba80, #a97dff5c, #fff8ba80); */
+    background: #a97dff5c;
+
+    .status span {
+        background: #dbfce7;
+        background: linear-gradient(212deg, #dbfce7, #fff27d8c);
+
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+            rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    }
+
+    .complet-btn {
+        background: linear-gradient(212deg, #dbfce7, #fff27d8c);
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+            rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    }
+}
+
+.bg-gradient-pending-2 {
+    /* background: linear-gradient(212deg, #f4aee8d6, #fff27d3b, #7dffac8c); */
+    background: linear-gradient(212deg, #f4aee8d6, #fff27d3b, #7dffac8c, #f4aee8d6, #fff27d3b, #7dffac8c);
 
     .status span {
         background: #dbfce7;
@@ -60,8 +92,8 @@
 .icon-active-3 {
     background-image: linear-gradient(
         to top,
-        #fbc2eb 0%,
-        #a6c1ee 100%
+        var(--primary-color) 0%,
+        var(--secondary-color) 100%
     ) !important;
     /* background-image: linear-gradient(to top, #A9F1DF 0%, #FFBBBB 100%) !important; */
 
@@ -219,6 +251,10 @@
     right: auto;
 }
 
+.rtl select{
+    background-position: left .5rem center;
+}
+
 .open-notification{
     transition: .4s ease-in-out !important;
     transform: translateY(0px) !important;
@@ -230,7 +266,27 @@
 }
 
 .btn-bg{
-    background: linear-gradient(135deg, #0d6efd, #6610f2) !important;
+    background: linear-gradient(135deg, var(--background-color), var(--accent-color)) !important;
+}
+
+.notification-pagenation-box{
+    display: flex;
+    flex-direction: column;
+    overflow-x: scroll;
+    text-align: center;
+    align-items: flex-start;
+}
+
+.notification-pagenation-box .notification-pagenation-list-box{
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-pagenation-box .notification-pagenation-list{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
 @media screen and (max-width: 640px) {
@@ -246,6 +302,10 @@
         right: -170px !important;
     }
 
+    .modal-box{
+        width: 88% !important;
+        margin: auto !important;
+    }
 }
 
 @media screen and (max-width: 1270px) {

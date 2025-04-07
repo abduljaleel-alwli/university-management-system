@@ -47,6 +47,13 @@ return [
             'report' => false,
         ],
 
+        // This disk is used to store files in the public directory
+        // and is accessible via the web. It is not recommended to use this
+        'local-public' => [
+            'driver' => 'local',
+            'root' => public_path(),
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

@@ -49,7 +49,7 @@ class SendStudentNotification extends Component
         $this->departments = Department::all();
     }
 
-    public function updatedSearch()
+    public function searchStudents()
     {
         $this->resetPage();
     }
@@ -75,15 +75,32 @@ class SendStudentNotification extends Component
 
         foreach ($this->search as $key => $value) {
             if (!empty($value)) {
-                if (in_array($key, ['student_first_name', 'student_father_name', 'student_grandfather_name', 'student_last_name'])) {
+                if (in_array($key, ['first_name', 'father_name', 'grandfather_name', 'last_name'])) {
                     $query->where(function ($q) use ($key, $value) {
-                        $q->where(str_replace('student_', '', $key) . '_ar', 'like', "%{$value}%")
-                          ->orWhere(str_replace('student_', '', $key) . '_en', 'like', "%{$value}%");
+                        $q->where($key . '_ar', 'like', "%{$value}%")
+                            ->orWhere($key . '_en', 'like', "%{$value}%");
                     });
-                } elseif (in_array($key, ['student_email', 'student_phone_number'])) {
-                    $query->where(str_replace('student_', '', $key), 'like', "%{$value}%");
-                } elseif (in_array($key, ['study_type', 'admission_channel', 'academic_stage', 'status', 'department_id'])) {
+                } elseif (in_array($key, ['email', 'phone_number'])) {
+                    $query->where($key, 'like', "%{$value}%");
+                } elseif (in_array($key, ['study_type', 'admission_channel', 'academic_stage', 'department_id'])) {
                     $query->where($key, $value);
+                } elseif ($key === 'status') {
+                    if (in_array($value, ['active', 'suspended', 'pending_review'])) {
+                        $query->where('status', $value)
+                        ->whereDoesntHave('postGraduationStep'); // ✅ تأكد من عدم وجود بيانات في post_graduation_steps;
+                    }elseif ($value === 'pending_review') {
+                        $query->where(function ($q) {
+                            $q->where('status', 'pending_review')
+                              ->whereDoesntHave('postGraduationStep') // ✅ الطلاب الذين لم يدخلوا مرحلة ما بعد التخرج
+                              ->orWhereHas('postGraduationStep', function ($subQuery) {
+                                  $subQuery->where('post_graduation_status', 'pending_review'); // ✅ الطلاب الذين لديهم post_graduation_status = pending_review
+                              });
+                        });
+                    } elseif (in_array($value, ['graduate', 'fail',])) {
+                        $query->whereHas('postGraduationStep', function ($q) use ($value) {
+                            $q->where('post_graduation_status', $value);
+                        });
+                    }
                 } elseif ($key === 'start_date') {
                     $query->whereDate('start_date', '>=', $value);
                 } elseif ($key === 'study_end_date') {

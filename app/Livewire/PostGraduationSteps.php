@@ -37,7 +37,7 @@ class PostGraduationSteps extends Component
         'post_graduation_status' => 'required|in:graduate,fail,pending_review',
     ];
 
-    public function mount($student_id)
+    public function mount($student_id = null)
     {
         $this->student_id = $student_id;
         $this->student = Student::findOrFail($student_id);

@@ -216,15 +216,19 @@
                 </ul>
                 <div class="mt-5 px-4 mb-3">
                     <!-- روابط التنقل بين الصفحات -->
-                    <div class="text-gray-600">
+                    <div class="text-gray-600 notification-pagenation-box">
                         {{ $notifications->links() }}
                     </div>
 
                     <!-- زر تحديد الكل كمقروء -->
                     <div class="mt-4 flex justify-center">
                         <button wire:click="markAllAsRead"
-                            class="bg-blue-500 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-200 transform focus:outline-none focus:ring-2 focus:ring-blue-400 btn-bg">
+                            class="bg-blue-500 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-200 transform focus:outline-none focus:ring-2 focus:ring-blue-400 btn-bg relative"
+                            x-data="{ tooltip: false }" @mouseover="tooltip = true" @mouseleave="tooltip = false">
                             {{ __('Mark all as read') }}
+                            <div x-show="tooltip" class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded-lg px-2 py-1 shadow-lg">
+                                {{ __('Marks all notifications as read') }}
+                            </div>
                         </button>
                     </div>
                 </div>

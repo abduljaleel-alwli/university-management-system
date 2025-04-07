@@ -92,48 +92,55 @@
         <!-- بيانات الطالب -->
         <div class="bg-white shadow-soft-xl rounded-2xl p-6 mt-6">
             <h2 class="text-2xl font-bold text-gray-800 pb-6">{{ __('Student Details') }}</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @php
-                    $fields = [
-                        'first_name_ar' => __('First Name (Arabic)'),
-                        'first_name_en' => __('First Name (English)'),
-                        'father_name_ar' => __('Father Name (Arabic)'),
-                        'father_name_en' => __('Father Name (English)'),
-                        'grandfather_name_ar' => __('Grandfather Name (Arabic)'),
-                        'grandfather_name_en' => __('Grandfather Name (English)'),
-                        'last_name_ar' => __('Last Name (Arabic)'),
-                        'last_name_en' => __('Last Name (English)'),
-                        'email' => __('Email'),
-                        'phone_number' => __('Phone Number'),
-                    ];
-                @endphp
+            @if ($student)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @php
+                        $fields = [
+                            'first_name_ar' => __('First Name (Arabic)'),
+                            'first_name_en' => __('First Name (English)'),
+                            'father_name_ar' => __('Father Name (Arabic)'),
+                            'father_name_en' => __('Father Name (English)'),
+                            'grandfather_name_ar' => __('Grandfather Name (Arabic)'),
+                            'grandfather_name_en' => __('Grandfather Name (English)'),
+                            'last_name_ar' => __('Last Name (Arabic)'),
+                            'last_name_en' => __('Last Name (English)'),
+                            'email' => __('Email'),
+                            'phone_number' => __('Phone Number'),
+                        ];
+                    @endphp
 
-                @foreach ($fields as $key => $label)
-                    <div class="space-y-2">
-                        <label class="block text-sm font-medium text-gray-700">{{ $label }}</label>
-                        <div class="mt-1 p-2 bg-gray-50 rounded-lg">
-                            <p class="text-gray-900">{{ $student->$key }}</p>
+                    @foreach ($fields as $key => $label)
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">{{ $label }}</label>
+                            <div class="mt-1 p-2 bg-gray-50 rounded-lg">
+                                <p class="text-gray-900">{{ $student->$key }}</p>
+                            </div>
                         </div>
+                    @endforeach
+                </div>
+                @role('admin')
+                    <div class="flex">
+                        <a href="{{ route('admin.students.show', ['student' => $student->id]) }}"
+                            class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-blue-700 transition btn-bg">
+                            {{ __('View') }}
+                        </a>
+                        <a href="{{ route('admin.students.edit', ['student' => $student->id]) }}"
+                            class="mx-2 block bg-yellow-400 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-yellow-500 transition">
+                            {{ __('Edit') }}
+                        </a>
                     </div>
-                @endforeach
-            </div>
-            @role('admin')
-                <div class="flex">
-                    <a href="{{ route('admin.students.show', ['student' => $student->id]) }}"
+                @elseif('super-admin')
+                    <a href="{{ route('super-admin.students.show', ['student' => $student->id]) }}"
                         class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-blue-700 transition btn-bg">
                         {{ __('View') }}
                     </a>
-                    <a href="{{ route('admin.students.edit', ['student' => $student->id]) }}"
-                        class="mx-2 block bg-yellow-400 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-yellow-500 transition">
-                        {{ __('Edit') }}
-                    </a>
-                </div>
-            @elseif('super-admin')
-                <a href="{{ route('super-admin.students.show', ['student' => $student->id]) }}"
-                    class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center mt-4 hover:bg-blue-700 transition btn-bg">
-                    {{ __('View') }}
-                </a>
-            @endrole
+                @endrole
+            @else
+                <span
+                    class="px-2 py-1 inline-flex text-xs leading-5 font-semibold whitespace-nowrap rounded-full bg-red-200 text-red-800">
+                    {{ __('Deleted student') }}
+                </span>
+            @endif
         </div>
     </div>
 

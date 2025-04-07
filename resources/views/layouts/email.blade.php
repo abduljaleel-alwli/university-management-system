@@ -5,7 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('subject')</title>
+    @php
+        $settings = app_settings();
+    @endphp
     <style>
+        :root {
+            --primary-color: {{ $settings->primary_color }};
+            --secondary-color: {{ $settings->secondary_color }};
+            --accent-color: {{ $settings->accent_color }};
+            --background-color: {{ $settings->background_color }};
+        }
+
         body {
             font-family: 'Tajawal', Arial, sans-serif;
             direction: rtl;
@@ -27,7 +37,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            background: linear-gradient(135deg, var(--background-color), var(--accent-color));
             color: white;
             padding: 20px;
             text-align: center;
@@ -58,7 +68,7 @@
             padding: 14px 24px;
             margin-top: 20px;
             margin-bottom: 15px;
-            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            background: linear-gradient(135deg, var(--background-color), var(--accent-color));
             color: white;
             text-decoration: none;
             font-size: 16px;
@@ -69,7 +79,7 @@
         }
 
         .btn:hover {
-            background: linear-gradient(135deg, #6610f2, #0d6efd);
+            background: linear-gradient(135deg, var(--background-color), var(--accent-color));
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
@@ -88,7 +98,7 @@
 <body>
     <div class="container">
         <div class="header">
-            {{ config('app.name') }}
+            {{ $settings->site_name }}
         </div>
 
         <div class="content">
@@ -98,7 +108,8 @@
         @yield('link')
 
         <div class="footer" style="margin: 10px 0; padding-top: 15px;">
-            &copy; {{ date('Y') }} {{ __('All Rights Reserved') }} - <a href="{{ config('app.url') }}">{{ config('app.name') }}</a>
+            &copy; {{ date('Y') }} {{ __('All Rights Reserved') }} - <a
+                href="{{ config('app.url') }}">{{ $settings->site_name }}</a>
         </div>
     </div>
 </body>

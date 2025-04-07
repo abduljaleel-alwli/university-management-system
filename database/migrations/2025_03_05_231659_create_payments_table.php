@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('receipt_number')->unique(); // رقم الوصل يتم إنشاؤه تلقائيًا
-            $table->foreignId('student_id')->constrained()->onDelete('cascade'); // ربط بالطالب
-            $table->foreignId('department_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 10, 2); // المبلغ
-            $table->enum('currency', ['IQD', 'USD']); // العملة
-            $table->date('payment_date'); // تاريخ الدفع
-            $table->text('notes')->nullable(); // الملاحظات
-            $table->foreignId('author_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('editor_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('receipt_number')->unique(); // رقم الوصل
+            $table->foreignId('student_id')->nullable()->constrained()->onDelete('set null'); // حذف الدفع مع الطالب
+            $table->foreignId('department_id')->nullable()->constrained()->onDelete('set null'); // حذف الدفع مع القسم
+            $table->decimal('amount', 10, 2);
+            $table->enum('currency', ['IQD', 'USD']);
+            $table->date('payment_date');
+            $table->text('notes')->nullable();
+            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete(); // مهم
+            $table->foreignId('editor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

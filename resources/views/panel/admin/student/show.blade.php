@@ -8,7 +8,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-soft-xl sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
 
                     <!-- زر العودة إلى القائمة -->
@@ -30,7 +30,7 @@
                     </div>
 
                     <!-- بطاقة عرض تفاصيل الطالب -->
-                    <div class="bg-white shadow-md rounded-lg p-6">
+                    <div class="bg-white rounded-lg p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             <!-- الاسم (عربي) -->
@@ -175,15 +175,37 @@
                                 <label class="block text-sm font-medium text-gray-700">{{ __('Status') }}</label>
                                 <div class="mt-1 p-2 bg-gray-50 rounded-lg">
                                     <p class="text-gray-900">
-                                        @if ($student->status == 'active')
+                                        @php
+                                            $status = null;
+                                            if ($student->postGraduationStep) {
+                                                $status = $student->postGraduationStep->post_graduation_status;
+                                            }
+                                        @endphp
+                                        @if ($status == 'graduate')
                                             <span
-                                                class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">{{ __('Active') }}</span>
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 text-green-800">
+                                                {{ __('Graduate') }}
+                                            </span>
+                                        @elseif($status == 'fail')
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 text-red-800">
+                                                {{ __('Fail') }}
+                                            </span>
+                                        @elseif ($student->status == 'active')
+                                            <span
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                {{ __('Active') }}
+                                            </span>
                                         @elseif ($student->status == 'suspended')
                                             <span
-                                                class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">{{ __('Suspended') }}</span>
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                {{ __('Suspended') }}
+                                            </span>
                                         @else
                                             <span
-                                                class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">{{ __('Pending Review') }}</span>
+                                                class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                {{ __('Pending Review') }}
+                                            </span>
                                         @endif
                                     </p>
                                 </div>
@@ -194,7 +216,7 @@
                                     class="block text-sm font-medium text-gray-700">{{ __('Specialization Type') }}</label>
                                 <div class="mt-1 p-2 bg-gray-50 rounded-lg">
                                     <p class="text-gray-900">
-                                        {{ $student->specialization_type_translated }}
+                                        {{ $student->specializationType->name }}
                                     </p>
                                 </div>
                             </div>
