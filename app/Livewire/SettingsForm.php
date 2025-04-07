@@ -40,7 +40,7 @@ class SettingsForm extends Component
         $this->validate([
             'site_name' => 'required|string|max:255',
             'new_logo' => 'nullable|image|mimes:jpg,jpeg,png,svg,gif|max:2048',
-            'new_favicon' => 'nullable|image|mimes:ico,png,jpg,jpeg|max:1024',
+            'new_favicon' => 'nullable|mimes:ico,png,jpg,jpeg|max:1024',
             'primary_color' => 'required|string',
             'secondary_color' => 'required|string',
             'accent_color' => 'required|string',

@@ -44,21 +44,24 @@
                                     d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                             </svg>
                             <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                <span class="font-semibold">{{ __("Click to upload") }}</span> {{ __('or drag and drop') }}
+                                <span class="font-semibold">{{ __('Click to upload') }}</span>
+                                {{ __('or drag and drop') }}
                             </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)
+                            <p class="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG, JPEG or GIF (MAX. 800x400px)
                             </p>
                         </div>
-                        <input id="new_logo" type="file" wire:model="new_logo" class="hidden" />
+                        <input id="new_logo" type="file" wire:model="new_logo" accept=".svg,.png,.jpg,.jpeg,.gif" class="hidden" />
                     </label>
                 </div>
+                @error('new_logo')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
             {{-- Favicon --}}
             <div class="bg-gray-50 p-4 rounded-lg">
                 <div class="mb-3 flex items-center justify-between space-x-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('Favicon') }}</label>
-
                     @if ($new_favicon)
                         <img src="{{ $new_favicon->temporaryUrl() }}" class="h-10 w-10 rounded-md shadow" />
                     @elseif ($favicon)
@@ -86,15 +89,19 @@
                                     d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                             </svg>
                             <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                <span class="font-semibold">{{ __("Click to upload") }}</span> {{ __('or drag and drop') }}
+                                <span class="font-semibold">{{ __('Click to upload') }}</span>
+                                {{ __('or drag and drop') }}
                             </p>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                ICO, PNG, JPG (MAX. 256x256px)
+                                ICO, PNG, JPG, JPEG (MAX. 256x256px)
                             </p>
                         </div>
-                        <input id="new_favicon" type="file" wire:model="new_favicon" class="hidden" />
+                        <input id="new_favicon" type="file" wire:model="new_favicon" accept=".ico,.png,.jpg,.jpeg" class="hidden" />
                     </label>
                 </div>
+                @error('new_favicon')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
 
         </div>
