@@ -1,9 +1,3 @@
-+66
--66
-
-
-Original file line number	Diff line number	Diff line change
-@@ -1,66 +1,66 @@
 # Laravel Project Installation Guide
 ## 1. Clone the Repository
 ```sh
