@@ -23,7 +23,7 @@
             </div>
             <!-- حقل القسم -->
             <div>
-                <label for="department_id" class="p-3">{{ __('Department') }}</label>
+                <label for="department_id" class="p-3"></label>
                 <select wire:model="search.department_id"
                     class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
                     <option value="">{{ __('Select Department') }}</option>
@@ -111,6 +111,18 @@
     </div>
 
     <div class="py-6">
+        <div class="tooltips static-tooltips">
+            <div class="tips-box bg-white shadow-soft-xl rounded-xl p-6 mb-6">
+                <x-status-circle color="bg-white tip-circle" label="Active" />
+                <x-status-circle color="bg-green-100 tip-circle" label="Graduate" />
+                <x-status-circle color="bg-red-100 tip-circle" label="Fail" />
+                <x-status-circle color="bg-yellow-100 tip-circle" label="Suspended" />
+                <x-status-circle color="bg-orange-500 is-close-to-end tip-circle" label="The student study period ends after 3 months." />
+                <x-status-circle color="bg-gradient-pending from-gray-100 to-gray-100 tip-circle" label="Pending Review" />
+                <x-status-circle color="bg-gradient-pending-2 from-gray-100 to-gray-100 tip-circle"
+                    label="Post-Graduation discussion Pending Review" />
+            </div>
+        </div>
         <div class="bg-white shadow-soft-xl rounded-xl p-6 mb-6">
             <div>
                 <!-- جدول عرض الطلاب -->

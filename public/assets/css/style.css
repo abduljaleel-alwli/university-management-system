@@ -289,6 +289,32 @@
     justify-content: center;
 }
 
+/* --> Tooltip */
+.tooltips{
+    width: 100%;
+    padding: 4px;
+    display: flex;
+    position: static;
+    justify-content: flex-end;
+}
+.tips-box{
+    width: max-content;
+    display: flex;
+}
+.tip-circle{
+    margin: 0 5px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+
+.nav-tooltips{
+    display: flex;
+}
+.static-tooltips{
+    display: none;
+}
+
 @media screen and (max-width: 640px) {
     .navigation-btns{
         margin: 0 13px;
@@ -305,6 +331,14 @@
     .modal-box{
         width: 88% !important;
         margin: auto !important;
+    }
+
+    /* --> Tool Tips */
+    .nav-tooltips{
+        display: none;
+    }
+    .static-tooltips{
+        display: flex;
     }
 }
 

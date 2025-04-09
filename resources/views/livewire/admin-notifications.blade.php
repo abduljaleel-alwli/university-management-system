@@ -1,7 +1,7 @@
 <div x-data="{ isOpen: false }" class="relative">
     <!-- زر الإشعارات -->
     <button @click="isOpen = !isOpen"
-        class="relative bg-gray-100 p-3 rounded-full focus:outline-none hover:bg-gray-200 transition duration-200 ease-in-out transform hover:scale-110">
+        class="relative bg-gray-100 p-3 rounded-full focus:outline-none hover:bg-gray-200 transition duration-200 ease-in-out transform">
         <!-- أيقونة الجرس -->
         <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>

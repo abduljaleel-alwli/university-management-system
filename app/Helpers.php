@@ -28,6 +28,15 @@ if (!function_exists('isActiveIcon')) {
     }
 }
 
+// is Route
+if (!function_exists('isRoute')) {
+    function isRoute($routeName)
+    {
+        return request()->routeIs($routeName);
+    }
+}
+
+
 if (!function_exists('isRtl')) {
     function isRtl()
     {

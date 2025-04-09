@@ -26,7 +26,27 @@
 
             <div class="flex items-center md:ml-auto md:pr-4">
                 {{-- Input Box Here --}}
-
+                @if (isRoute('admin.students.index') ||
+                        isRoute('super-admin.students.index') ||
+                        isRoute('admin.departments.show') ||
+                        isRoute('super-admin.departments.show') ||
+                        isRoute('super-admin.notifications.index') ||
+                        isRoute('admin.send-emails.index') ||
+                        isRoute('super-admin.reports.index') ||
+                        isRoute('admin.researches.create'))
+                    <div class="tips-box nav-tooltips bg-white border border-gray-100 rounded-xl p-4">
+                        <x-status-circle color="bg-white tip-circle" label="Active" />
+                        <x-status-circle color="bg-green-100 tip-circle" label="Graduate" />
+                        <x-status-circle color="bg-red-100 tip-circle" label="Fail" />
+                        <x-status-circle color="bg-yellow-100 tip-circle" label="Suspended" />
+                        <x-status-circle color="bg-orange-500 is-close-to-end tip-circle"
+                            label="The student study period ends after 3 months." />
+                        <x-status-circle color="bg-gradient-pending from-gray-100 to-gray-100 tip-circle"
+                            label="Pending Review" />
+                        <x-status-circle color="bg-gradient-pending-2 from-gray-100 to-gray-100 tip-circle"
+                            label="Post-Graduation discussion Pending Review" />
+                    </div>
+                @endif
             </div>
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
 
